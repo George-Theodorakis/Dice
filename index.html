@@ -326,7 +326,9 @@
 		var beginIndex=0;
 		var bracket = 0;
 		replacements.forEach(function(arr){
-			string=string.replace(arr[0],arr[1]);
+			while(string.indexOf(arr[0])>-1){
+				string=string.replace(arr[0],arr[1]);
+			}
 		});
 		string=string+',';
 		for(var i = 0; i < string.length; i++){
