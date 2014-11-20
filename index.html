@@ -246,22 +246,21 @@
 		var result = [];
 		var begin = [];
 		var beginIndex=0;
-		var bracket = false;
+		var bracket = 0;
 		string=string+',';
 		for(var i = 0; i < string.length; i++){
-			if(bracket){
-				if(string.charAt(i)===closeBracket){
-					bracket = false;
-				}
-			}else{
-				if(string.charAt(i)===openBracket){
-					bracket = true;
-				}
-				if(string.charAt(i)===','){
-					begin.push(string.substring(beginIndex,i));
-					beginIndex=i+1;
-				}
+			if(string.charAt(i)===closeBracket){
+				bracket--;
 			}
+		
+			if(string.charAt(i)===openBracket){
+				bracket++;
+			}
+			if(bracket==0&&string.charAt(i)===','){
+				begin.push(string.substring(beginIndex,i));
+				beginIndex=i+1;
+			}
+		
 		}
 		begin=begin.map(function(str){return str.trim()});
 		begin.forEach(function(value){
