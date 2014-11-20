@@ -4,8 +4,8 @@
 <p>The probability that each player wins is shown in the text boxes below.</p>
 <p>Each player has dice with arbitrary numbers of sides - the input boxes list how many sides each individual die has. </p>
 <p>Warning: Setting the number of trials too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.</p>
-<p>Player 1 Dice <Input id="firstIn" value=6> <Button type="button" onclick="showDice('firstIn')">Show Dice</Button></p>
-<p>Player 2 Dice <Input id="secondIn" value=6> <Button type="button" onclick="showDice('secondIn')">Show Dice</Button></p>
+<p>Player 1 Dice <Input id="firstIn" value=6> <Button type="button" onclick="showDice('firstIn')">Show Dice</Button> <Button type="button" onclick="rollDice('firstIn')">Roll Dice</Button></p>
+<p>Player 2 Dice <Input id="secondIn" value=6> <Button type="button" onclick="showDice('secondIn')">Show Dice</Button> <Button type="button" onclick="rollDice('secondIn')">Roll Dice</Button></p>
 <p>Number of trials <Input id="trials" value=10000></p>
 <p>Experimental Probability that Player 1 wins<Input id="experimentalOut1" disabled=true></p>
 <p>Experimental Probability that Player 2 wins<Input id="experimentalOut2" disabled=true></p>
@@ -46,6 +46,9 @@
 	}
 	var showDice = function(htmlInputId){
 		alert(parse(document.getElementById(htmlInputId).value).map(createDie).join('\n'));
+	}
+	var rollDice = function(htmlInputId){
+		alert(parse(document.getElementById(htmlInputId).value).map(createDie).map(function(thing){return thing.roll();}).join('\n'));
 	}
 	var randInt = function(max) {//[0..max)
   		return Math.floor(Math.random() * max);
@@ -154,8 +157,13 @@
 	Fraction.prototype.leastCommonDenominator = function(fraction){
 		return this.denominator*fraction.denominator/gcd(this.denominator,fraction.denominator);
 	}
+	var strsDice = ["add","multiply","max"];
+	var constrsDice = [AddDie,MultiplyDie,MaxDie];
 	var createDie = function(input){
 		if(input instanceof Array){
+			if(strsDice.indexOf(input[0])>-1){
+				return new constrsDice[strsDice.indexOf(input[0])](input.slice(1).map(createDie));
+			}
 			return new ComplexDie(input);
 		}else{
 			return new SimpleDie(input);
@@ -170,6 +178,11 @@
 	}
 	function SimpleDie(sides){//simple die has sides 1..n - n is argument to constructor
 		this.sides=sides;
+		var arr = [];
+		for(var i = 0; i < sides; i++){
+			arr.push(i+1);
+		}
+		this.sideValues=arr;
 	}
 	SimpleDie.prototype=new Die();
 	SimpleDie.prototype.cdf = function(value){
@@ -223,6 +236,70 @@
 	ComplexDie.prototype.toString = function(){
 		return "Die with " + this.sides + " sides of " + this.sideValues;
 	}
+	function MultiDie(){};
+	MultiDie.prototype = new Die();
+	MultiDie.prototype.maxValue = function(){
+		var max=this.identity;
+		this.dice.forEach(function(die){
+			max=this.operation(max,die.maxValue());
+		},this);
+		return max;
+	}
+	MultiDie.prototype.roll = function(){
+		var result = this.identity;
+			this.dice.forEach(function(die){
+			result=this.operation(result,die.roll());
+		},this);
+		return result;
+	}
+	MultiDie.prototype.cdf = ComplexDie.prototype.cdf;//I have no idea if this will work
+	MultiDie.prototype.cdfFrac = ComplexDie.prototype.cdfFrac;
+	MultiDie.prototype.createSideValues = function(){
+		this.sideValues = this.possibleCombinations(this.dice.length-1).sort(function(a,b){return (Number(a)>Number(b))?1:((a==b)?0:-1);});
+		this.sides = this.sideValues.length;
+	}
+	MultiDie.prototype.possibleCombinations = function(index){
+		var previous = [this.identity];
+		var current = this.dice[index].sideValues;
+		if(index>0){
+			previous = this.possibleCombinations(index-1);		
+		}
+		var result = new Array(previous.length*this.dice[index].sides);
+		for(var i = 0; i < previous.length; i++){	
+			for(var j = 0; j < current.length; j++){
+				result[i*current.length+j]=this.operation(previous[i],current[j]);
+			}
+		}
+		return result;
+	}
+	MultiDie.prototype.toString = function(){
+		return this.name + "({" + this.dice.join("},{") + "})";
+	}
+	function AddDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+		
+	};
+	AddDie.prototype = new MultiDie();
+	AddDie.prototype.identity=0;
+	AddDie.prototype.name = "add";
+	AddDie.prototype.operation = function(a,b){return a+b;}
+	function MultiplyDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+	};
+	MultiplyDie.prototype = new MultiDie();
+	MultiplyDie.prototype.identity=1;
+	MultiplyDie.prototype.name = "multiply";
+	MultiplyDie.prototype.operation= function(a,b){return a*b;}
+	function MaxDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+	};
+	MaxDie.prototype = new MultiDie();
+	MaxDie.prototype.identity=-9999;//negative infinity
+	MaxDie.prototype.name = "max"
+	MaxDie.prototype.operation = function(a,b){return Math.max(a,b);}
 	var gcd = function(a, b) { //this function shamelessly copied from internet
 	 	 if ( ! b) { 
 	 	 	return a; 
@@ -241,12 +318,16 @@
 	var formatNumber = function(x) { //also shamelessly copied from the internet
 	 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); 
 	}	
-	var openBracket = "{",closeBracket = "}";//in case other delimeters are deemed more suitable
+	var openBracket = "{",closeBracket = "}";//nevermind, don't change these
+	var replacements = [["(","{add,"],["<","{multiply,"],["[","{max,"],[")","}"],[">","}"],["]","}"]];
 	var parse = function(string){
 		var result = [];
 		var begin = [];
 		var beginIndex=0;
 		var bracket = 0;
+		replacements.forEach(function(arr){
+			string=string.replace(arr[0],arr[1]);
+		});
 		string=string+',';
 		for(var i = 0; i < string.length; i++){
 			if(string.charAt(i)===closeBracket){
@@ -281,16 +362,18 @@
 				iterations=split[1];	
 			}
 			if(temp.indexOf(openBracket)>-1){
-				var tempresult = parse(temp.replace(openBracket,"").replace(closeBracket,""));
-				if(tempresult.map(isValid).indexOf(false)!=-1){
-					return;
-				}
+				var tempresult = parse(temp.substring(1,temp.length-1));
+		//		var tempresult = parse(temp.replace(openBracket,"").replace(closeBracket,""));
+		//		if(tempresult.slice(1).map(isValid).indexOf(false)!=-1){
+		//			return;
+		//		}
 				temp = tempresult;
-			}else{
-				if(!isValid(split[0])){
-					return;
-				}
 			}
+		//	else{
+		//		if(!isValid(split[0])){
+		//			return;
+		//		}
+		//	}
 			for(var i = 0; i < iterations; i++){
 				result.push(temp);
 			}
