@@ -283,7 +283,7 @@
 	AddDie.prototype = new MultiDie();
 	AddDie.prototype.identity=0;
 	AddDie.prototype.name = "add";
-	AddDie.prototype.operation = function(a,b){return a+b;}
+	AddDie.prototype.operation = function(a,b){return Number(a)+Number(b);}
 	function MultiplyDie(dice){
 		this.dice=dice;
 		this.createSideValues();
