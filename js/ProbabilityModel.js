@@ -28,33 +28,34 @@
 		this.count+=quantity;
 		this.array[value]+=quantity;
 	}
-	ProbabilityModel.prototype.cdf = function(value){
+	ProbabilityModel.prototype.cdfTotal = function(value){
 		if(this.cachedCdf[value]===undefined){
-			var total=0;
-			this.array.forEach(function(quantity,i){
-				if(i<=value){
-					total+=quantity;
-				}
-			},this);
-			this.cachedCdf[value] = total/this.count;
+			if(this.cachedCdf[value-1]!==undefined){
+				var total = this.cachedCdf[value-1];
+					if(this.array[value]!==undefined){
+						total+=this.array[value];
+					}
+				this.cachedCdf[value] = total;
+			}else{
+				var total=0;
+				this.array.forEach(function(quantity,i){
+					if(i<=value){
+						total+=quantity;
+					}
+				},this);
+				this.cachedCdf[value] = total;
+			}
 		}
 		return this.cachedCdf[value];
+	}
+	ProbabilityModel.prototype.cdf = function(value){
+		return cdfTotal(value)/this.count;
 	}
 	ProbabilityModel.prototype.pdf = function(value){
 		return this.cdf(value)-this.cdf(value-1);
 	}
 	ProbabilityModel.prototype.cdfFrac = function(value){
-		if(this.cachedCdfFrac[value]===undefined){
-			var total=0;
-			this.array.forEach(function(quantity,i){
-				if(i<=value){
-					total+=quantity;
-				}
-			},this);
-			
-			this.cachedCdfFrac[value] = new Fraction(total,this.count);
-		}
-		return this.cachedCdfFrac[value];
+		return new Fraction(this.cdfTotal(value),this.count);
 	}
 	ProbabilityModel.prototype.pdfFrac = function(value){
 		return this.cdfFrac(value).subtract(this.cdfFrac(value-1));
