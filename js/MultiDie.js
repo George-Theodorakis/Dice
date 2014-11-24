@@ -42,3 +42,28 @@ function MultiDie(){};
 	MultiDie.prototype.toString = function(){
 		return this.name + "({" + this.dice.join("},{") + "})";
 	}
+	function AddDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+		
+	};
+	AddDie.prototype = new MultiDie();
+	AddDie.prototype.identity=0;
+	AddDie.prototype.name = "add";
+	AddDie.prototype.operation = function(a,b){return Number(a)+Number(b);}
+	function MultiplyDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+	};
+	MultiplyDie.prototype = new MultiDie();
+	MultiplyDie.prototype.identity=1;
+	MultiplyDie.prototype.name = "multiply";
+	MultiplyDie.prototype.operation= function(a,b){return a*b;}
+	function MaxDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+	};
+	MaxDie.prototype = new MultiDie();
+	MaxDie.prototype.identity=-9999;//negative infinity
+	MaxDie.prototype.name = "max"
+	MaxDie.prototype.operation = function(a,b){return Math.max(a,b);}
