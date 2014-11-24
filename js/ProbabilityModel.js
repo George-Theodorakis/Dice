@@ -35,9 +35,9 @@
 		
 		if(this.cachedCdfFrac[value]===undefined){
 			var total=0;
-			for(var i in this){
+			for(var i in this.array){
 				if(i<=value){
-					total+=this[i];
+					total+=this.array[i];
 				}
 				this.cachedCdfFrac[value]=new Fraction(total,this.count);
 			}
