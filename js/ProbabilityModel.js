@@ -1,21 +1,10 @@
 //this whole class may need working around javascript type confusion
-	function ProbabilityModel(list){//list soon to be omitted
+	function ProbabilityModel(){
 		this.count=0;
 		this.uniques=0;
 		this.array=[];
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
-		var i;
-		for(var j in list){
-			this.count++;
-			i=list[j];
-			if(this.array[i]===undefined){
-				this.array[i]=1;
-				this.uniques++;
-			}else{
-				this.array[i] = Number(this.array[i])+1;
-			}
-		}
 		
 	}
 	ProbabilityModel.prototype.add = function(value,quantity){
