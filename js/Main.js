@@ -13,6 +13,7 @@ window.onload = function(){
 				result.probFrac1=calculateProbFrac(firstDiceArray,secondDiceArray);
 				result.probFrac2=calculateProbFrac(secondDiceArray,firstDiceArray);
 			}catch(err){
+				console.log(err);
 				result.probFrac1 = "Cannot calculate exact";
 				result.probFrac2 = "Cannot calculate exact";
 			}
