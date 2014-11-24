@@ -1,16 +1,17 @@
 //this whole class may need working around javascript type confusion
 	function ProbabilityModel(list){//list must be sorted
 		this.count=0;
+		this.array={};//haha
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
 		var i;
 		for(var j in list){
 			this.count++;
 			i=list[j];
-			if(this[i]===undefined){
-				this[i]=1;
+			if(this.array[i]===undefined){
+				this.array[i]=1;
 			}else{
-				this[i] = Number(this[i])+1;
+				this.array[i] = Number(this.array[i])+1;
 			}
 		}
 		
@@ -18,9 +19,9 @@
 	ProbabilityModel.prototype.cdf = function(value){
 		if(this.cachedCdf[value]===undefined){
 			var total=0;
-			for(var i in this){
+			for(var i in this.array){
 				if(i<=value){
-					total+=this[i];
+					total+=this.array[i];
 				}
 				this.cachedCdf[value]=total/this.count;
 			}
