@@ -1,10 +1,13 @@
 function SimpleDie(sides){//simple die has sides 1..n - n is argument to constructor
 		this.sides=sides;
 		var arr = [];
+		this.probModel = new ProbabilityModel({});
 		for(var i = 0; i < sides; i++){
 			arr.push(i+1);
+			probbModel.add(i+1,1);
 		}
 		this.sideValues=arr;
+		
 	}
 	SimpleDie.prototype=new Die();
 	SimpleDie.prototype.cdf = function(value){
