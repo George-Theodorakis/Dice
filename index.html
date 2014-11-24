@@ -166,8 +166,10 @@
 		this.count=0;
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
-		for(var i in list){
+		var i;
+		for(var j in list){
 			this.count++;
+			i=list[j];
 			if(this[i]===undefined){
 				this[i]=1;
 			}else{
