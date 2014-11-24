@@ -23,7 +23,7 @@
 		this.cachedCdfFrac = {};
 		if(this.array[value]===undefined){
 			this.uniques++;
-			this.array[value]=quantity;
+			this.array[value]=0;
 		}
 		this.count+=quantity;
 		this.array[value]+=quantity;
