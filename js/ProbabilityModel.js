@@ -35,8 +35,8 @@
 				if(i<=value){
 					total+=quantity;
 				}
-				this.cachedCdf[value]=total/this.count;
 			},this);
+			this.cachedCdf[value] = total/this.count;
 		}
 		return this.cachedCdf[value];
 	}
@@ -50,8 +50,9 @@
 				if(i<=value){
 					total+=quantity;
 				}
-				this.cachedCdfFrac[value]=new Fraction(total,this.count);
 			},this);
+			
+			this.cachedCdfFrac[value] = new Fraction(total,this.count);
 		}
 		return this.cachedCdfFrac[value];
 	}
