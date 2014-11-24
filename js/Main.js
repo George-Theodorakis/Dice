@@ -108,6 +108,18 @@ window.onload = function(){
 		});
 		return result;
 	}
+	var strsDice = ["add","multiply","max"];
+ 	var constrsDice = [AddDie,MultiplyDie,MaxDie];
+ 	var createDie = function(input){
+ 		if(input instanceof Array){
+ 			if(strsDice.indexOf(input[0])>-1){
+ 				return new constrsDice[strsDice.indexOf(input[0])](input.slice(1).map(createDie));
+ 			}
+ 			return new ComplexDie(input);
+ 		}else{
+ 			return new SimpleDie(input);
+ 		}
+ 	}
 	var gcd = function(a, b) { //this function shamelessly copied from internet
 	 	 if ( ! b) { 
 	 	 	return a; 
