@@ -36,7 +36,7 @@ function MultiDie(){};
 		}else{
 			previous[this.identity]=1;
 		}
-		var result = new Array(previous.length*this.dice[index].probModel.array.uniques);
+		var result = new Array(previous.length*this.dice[index].probModel.uniques);
 		
 		previous.forEach(function(quantity1,key1){
 			current.forEach(function(quantity2,key2){
