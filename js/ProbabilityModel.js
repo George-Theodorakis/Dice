@@ -49,7 +49,7 @@
 		return this.cachedCdf[value];
 	}
 	ProbabilityModel.prototype.cdf = function(value){
-		return cdfTotal(value)/this.count;
+		return this.cdfTotal(value)/this.count;
 	}
 	ProbabilityModel.prototype.pdf = function(value){
 		return this.cdf(value)-this.cdf(value-1);
