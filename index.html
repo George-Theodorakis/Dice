@@ -3,14 +3,19 @@
 <title>Probability Simulation</title>
 </head>
 <body>
+
+<div>
 <h1>This is a simulator for a game of chance</h1>
 <p>Two players each have a probability model based on rolling dice and performing operations on the results.</p>
 <p>The probability that each player wins is shown in the text boxes below.</p>
-<p>There are two ways to define inspanidual dice:  Merely typing a number such as <span class="input">6</span> represents a 6 sided die, while listing the number on each side in brackets can also represent a die.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>, although other combinations can be made.  Dice do not have a certain number of sides, but the number on each side must be an integer.</p>
-<h2>Operations on dice</h2>
+<h2>How to Use</h2>
+<p>There are two ways to define individual dice:  Merely typing a number such as <span class="input">6</span> represents a 6 sided die, while listing the number on each side in brackets can also represent a die.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>, although other combinations can be made.  Dice do not have a certain number of sides, but the number on each side must be an integer.</p>
 <p>Operations on dice are represented by putting the dice in a type of brackets: <span class="input">()</span> are used for addition, <span class="input"><></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum on any given die.  For example, <span class="input">[6,6]</span> means rolling 2 six sided dice and taking the higher value between them.  These operations can be combined - <span class="input"><[6,6],[6,6],6></span> is perfectly valid.</p>
 <p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[6,6]</span>, <span class="input">[6:2]</span> can be used. <span class="input"><[6,6],[6,6],6></span> is the same as <span class="input"><[6:2]:2,6></span>.</p>
 <p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
+</div>
+
+<div>
 <p>Player 1 Dice <Input id="firstIn" value=6> <Button type="button" onclick="showDice('firstIn')">Show Dice</Button> <Button type="button" onclick="rollDice('firstIn')">Roll Dice</Button></p>
 <p>Player 2 Dice <Input id="secondIn" value=6> <Button type="button" onclick="showDice('secondIn')">Show Dice</Button> <Button type="button" onclick="rollDice('secondIn')">Roll Dice</Button></p>
 <p>Number of trials <Input id="trials" value=10000></p>
@@ -20,6 +25,8 @@
 <p>Theoretical Probability that Player 2 wins<Input id="theoreticalOut2" disabled=true>   <Input id="theoreticalOutFrac2" disabled=true size=27></p>
 <p>Simulations per second <Input id="simulPerSecond" disabled=true></p>
 <p><Button type="button" id="button">Go!</Button></p>
+</div>
+
 
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src = "js/ProbabilityModel.js"></script>
@@ -29,6 +36,5 @@
 <script src = "js/MultiDie.js"></script>
 <script src = "js/Main.js"></script>
 <script src = "js/Fraction.js"></script>
-
 </body>
 </html>
