@@ -1,5 +1,5 @@
 function ComplexDie(sideValues){//complex die has arbitrary numbers on each side - pass array to constructor
-		this.probModel = new ProbabilityModel({});
+		this.probModel = new ProbabilityModel();
 		this.sideValues=sideValues.sort(function(a,b){return (Number(a)>Number(b))?1:((a==b)?0:-1);});//numerical sort
 		this.sides=sideValues.length;
 		for(var i =0; i < this.sides; i++){
