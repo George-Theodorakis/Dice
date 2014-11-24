@@ -30,9 +30,9 @@ function MultiDie(){};
 		if(index>0){
 			previous = this.possibleCombinations(index-1);		
 		}else{
-			previous[this.identity]=1;
+			previous.add(this.identity,1);
 		}
-		var result = new ProbabilityModel
+		var result = new ProbabilityModel();
 		
 		previous.array.forEach(function(quantity1,key1){
 			current.array.forEach(function(quantity2,key2){
@@ -68,6 +68,6 @@ function MultiDie(){};
 		this.createSideValues();
 	};
 	MaxDie.prototype = new MultiDie();
-	MaxDie.prototype.identity=-9999;//negative infinity
+	MaxDie.prototype.identity=0;//negative infinity
 	MaxDie.prototype.name = "max"
 	MaxDie.prototype.operation = function(a,b){return Math.max(a,b);}
