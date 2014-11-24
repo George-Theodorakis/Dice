@@ -1,7 +1,7 @@
 //this whole class may need working around javascript type confusion
-	function ProbabilityModel(list){//list must be sorted
+	function ProbabilityModel(list){//list soon to be omitted
 		this.count=0;
-		this.array={};//haha
+		this.array=[];
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
 		var i;
@@ -16,15 +16,23 @@
 		}
 		
 	}
+	ProbabilityModel.prototype.add = function(value,quantity){
+		this.cachedCdf = {};
+		this.cachedCdfFrac = {};
+		if(this.array[value]===undefined){
+			this.array[value]=quantity;
+		}
+		this.array[value]+=quantity;
+	}
 	ProbabilityModel.prototype.cdf = function(value){
 		if(this.cachedCdf[value]===undefined){
 			var total=0;
-			for(var i in this.array){
+			this.array.forEach(function(quantity,i){
 				if(i<=value){
-					total+=this.array[i];
+					total+=quantity;
 				}
 				this.cachedCdf[value]=total/this.count;
-			}
+			},this);
 		}
 		return this.cachedCdf[value];
 	}
@@ -32,15 +40,14 @@
 		return this.cdf(value)-this.cdf(value-1);
 	}
 	ProbabilityModel.prototype.cdfFrac = function(value){
-		
 		if(this.cachedCdfFrac[value]===undefined){
 			var total=0;
-			for(var i in this.array){
+			this.array.forEach(function(quantity,i){
 				if(i<=value){
-					total+=this.array[i];
+					total+=quantity;
 				}
 				this.cachedCdfFrac[value]=new Fraction(total,this.count);
-			}
+			},this);
 		}
 		return this.cachedCdfFrac[value];
 	}
