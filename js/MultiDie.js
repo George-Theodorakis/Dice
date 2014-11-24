@@ -47,7 +47,7 @@ function MultiDie(){};
 		},this);
 		for(var i = 0; i < previous.length; i++){	
 			for(var j = 0; j < current.length; j++){
-				result[i*current.length+j]=[this.operation(previous[i],current[j]);
+				result[i*current.length+j]=[this.operation(previous[i],current[j])];
 			}
 		}
 		return result;
