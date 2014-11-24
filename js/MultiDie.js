@@ -21,35 +21,26 @@ function MultiDie(){};
 		return this.probModel.cdfFrac(value);
 	}
 	MultiDie.prototype.createSideValues = function(){
-		var possibleCombins = this.possibleCombinations(this.dice.length-1);
-		this.probModel = new ProbabilityModel(this.sideValues);
-		possibleCombins.forEach(function(value,key){
-			this.probModel.add(key,value);
-		},this);
+		this.probModel = this.possibleCombinations(this.dice.length-1);
 	}
 	MultiDie.prototype.possibleCombinations = function(index){
-		var previous = [];
+		var previous = new ProbabilityModel([]);
 		
-		var current = this.dice[index].probModel.array;
+		var current = this.dice[index].probModel;
 		if(index>0){
 			previous = this.possibleCombinations(index-1);		
 		}else{
 			previous[this.identity]=1;
 		}
-		var result = new Array(previous.length*this.dice[index].probModel.uniques);
+		var result = new ProbabilityModel
 		
-		previous.forEach(function(quantity1,key1){
-			current.forEach(function(quantity2,key2){
+		previous.array.forEach(function(quantity1,key1){
+			current.array.forEach(function(quantity2,key2){
 				var key3 = this.operation(key1,key2);
 				var quantity3 = quantity1*quantity2;
-				result[key3] = quantity3;
+				result.add(key3,quantity3);
 			},this);
 		},this);
-		for(var i = 0; i < previous.length; i++){	
-			for(var j = 0; j < current.length; j++){
-				result[i*current.length+j]=[this.operation(previous[i],current[j])];
-			}
-		}
 		return result;
 	}
 	MultiDie.prototype.toString = function(){
