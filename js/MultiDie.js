@@ -24,7 +24,7 @@ function MultiDie(){};
 		this.probModel = this.possibleCombinations(this.dice.length-1);
 	}
 	MultiDie.prototype.possibleCombinations = function(index){
-		var previous = new ProbabilityModel([]);
+		var previous = new ProbabilityModel();
 		
 		var current = this.dice[index].probModel;
 		if(index>0){
