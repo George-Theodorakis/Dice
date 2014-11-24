@@ -314,7 +314,7 @@
 	MultiDie.prototype.createSideValues = function(){
 		this.sideValues = this.possibleCombinations(this.dice.length-1).sort(function(a,b){return (Number(a)>Number(b))?1:((a==b)?0:-1);});
 		this.sides = this.sideValues.length;
-		this.probModel = new ProbabilityModel(sideValues);
+		this.probModel = new ProbabilityModel(this.sideValues);
 	}
 	MultiDie.prototype.possibleCombinations = function(index){
 		var previous = [this.identity];
