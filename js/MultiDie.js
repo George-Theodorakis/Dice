@@ -21,20 +21,33 @@ function MultiDie(){};
 		return this.probModel.cdfFrac(value);
 	}
 	MultiDie.prototype.createSideValues = function(){
-		this.sideValues = this.possibleCombinations(this.dice.length-1).sort(function(a,b){return (Number(a)>Number(b))?1:((a==b)?0:-1);});
-		this.sides = this.sideValues.length;
+		var possibleCombins = this.possibleCombinations(this.dice.length-1);
 		this.probModel = new ProbabilityModel(this.sideValues);
+		possibleCombins.forEach(function(value,key){
+			this.probModel.add(key,value);
+		},this);
 	}
 	MultiDie.prototype.possibleCombinations = function(index){
-		var previous = [this.identity];
-		var current = this.dice[index].sideValues;
+		var previous = [];
+		
+		var current = this.dice[index].probModel.array;
 		if(index>0){
 			previous = this.possibleCombinations(index-1);		
+		}else{
+			previous[this.identity]=1;
 		}
-		var result = new Array(previous.length*this.dice[index].sides);
+		var result = new Array(previous.length*this.dice[index].probModel.array.uniques);
+		
+		previous.forEach(function(quantity1,key1){
+			current.forEach(function(quantity2,key2){
+				var key3 = this.operation(key1,key2);
+				var quantity3 = quantity1*quantity2;
+				result[key3] = quantity3;
+			},this);
+		},this);
 		for(var i = 0; i < previous.length; i++){	
 			for(var j = 0; j < current.length; j++){
-				result[i*current.length+j]=this.operation(previous[i],current[j]);
+				result[i*current.length+j]=[this.operation(previous[i],current[j]);
 			}
 		}
 		return result;
