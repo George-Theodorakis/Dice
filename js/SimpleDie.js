@@ -4,7 +4,7 @@ function SimpleDie(sides){//simple die has sides 1..n - n is argument to constru
 		this.probModel = new ProbabilityModel({});
 		for(var i = 0; i < sides; i++){
 			arr.push(i+1);
-			probbModel.add(i+1,1);
+			this.probModel.add(i+1,1);
 		}
 		this.sideValues=arr;
 		
