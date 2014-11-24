@@ -3,11 +3,14 @@
 <title>Probability Simulation</title>
 </head>
 <body>
-<p>This simulates the following Risk-like game of chance:</p>
-<p>Two Players each roll dice - whoever gets the highest value on any single die wins.</p>
+<h1>This is a simulator for a game of chance</h1>
+<p>Two players each have a probability model based on rolling dice and performing operations on the results.</p>
 <p>The probability that each player wins is shown in the text boxes below.</p>
-<p>Each player has dice with arbitrary numbers of sides - the input boxes list how many sides each individual die has. </p>
-<p>Warning: Setting the number of trials too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.</p>
+<p>There are two ways to define individual dice:  Merely typing a number such as "6" represents a 6 sided die, while listing the number on each side in brackets can also represent a die.  For example, <div class="input">{1,2,3,4,5,6}</div> is functionally identical to <div class="input">6</div>, although other combinations can be made.  Dice do not have a certain number of sides, but the number on each side must be an integer.</p>
+<h2>Operations on dice</h2>
+<p>Operations on dice are represented by putting the dice in a type of brackets: <div class="input">()</div> are used for addition, <div class="input"><></div> are used for multiplication, and <div class="input">[]<></div> are used for finding the maximum on any given die.  For example, <div class="input">[6,6]</div> means rolling 2 six sided dice and taking the higher value between them.  These operations can be combined - <div class="input"><[6,6],[6,6],6></div> is perfectly valid.</p>
+<p>Additionally, colons can be used to represent multiple copies - instead of writing <div class="input">[6,6]</div>, <div class="input">[6:2]</div> can be used. <div class="input"><[6,6],[6,6],6></div> is the same as <div class="input"><[6:2]:2,6></div>.</p>
+<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
 <p>Player 1 Dice <Input id="firstIn" value=6> <Button type="button" onclick="showDice('firstIn')">Show Dice</Button> <Button type="button" onclick="rollDice('firstIn')">Roll Dice</Button></p>
 <p>Player 2 Dice <Input id="secondIn" value=6> <Button type="button" onclick="showDice('secondIn')">Show Dice</Button> <Button type="button" onclick="rollDice('secondIn')">Roll Dice</Button></p>
 <p>Number of trials <Input id="trials" value=10000></p>
