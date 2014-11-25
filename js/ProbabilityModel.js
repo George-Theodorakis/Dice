@@ -5,7 +5,7 @@
 		this.array=[];
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
-		
+		this.maxValue=0;
 	}
 	ProbabilityModel.prototype.add = function(value,quantity){
 		this.cachedCdf = {};
@@ -16,6 +16,7 @@
 		}
 		this.count+=quantity;
 		this.array[value]+=quantity;
+		this.maxValue = Math.max(this.mavValue,this.array[value]);
 	}
 	ProbabilityModel.prototype.cdfTotal = function(value){
 		if(this.cachedCdf[value]===undefined){
