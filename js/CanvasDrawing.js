@@ -7,6 +7,7 @@ var drawOnCanvas = function(canvas, probModel){
 	context.strokeStyle=outlineColor;
 	var width = canvas.width;
 	var height = canvas.height;
+	context.clearRect(0,0,width,height);
 	var uniques = probModel.uniques;
 	var maxSize = probModel.maxValue;
 	var maxValue = probModel.array.length-1;
