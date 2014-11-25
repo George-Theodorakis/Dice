@@ -13,7 +13,7 @@ var drawOnCanvas = function(canvas, probModel,params){
 	var maxValue = params.maxValue;
 	drawWithParams(context,0,0,width,height,probModel,maxSize*probModel.maxValue,maxValue);
 }
-var drawWithParams(context,xleft,ytop,width,height,probModel,maxSize,maxValue){
+var drawWithParams = function(context,xleft,ytop,width,height,probModel,maxSize,maxValue){
 	probModel.array.forEach(function(size,value){
 		var topy = height*(1-size/maxSize);
 		var leftx = width*(value-1)/maxValue;
