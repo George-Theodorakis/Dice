@@ -1,24 +1,22 @@
+var dice;
 window.onload = function(){
 		document.getElementById("button").onclick = function(){
-			var firstDice = document.getElementById("firstIn").value;
-			var secondDice = document.getElementById("secondIn").value;
 			var trials = document.getElementById("trials").value;
 	 	 	var result = {};
-	 	 	var firstDiceArray = parse(firstDice).map(createDie);
-	 	 	var secondDiceArray = parse(secondDice).map(createDie);
+	 	 	updateDice();
  	 		var start = new Date().getTime();			
- 	 	 	result.simulation=runSimulation(firstDiceArray,secondDiceArray,trials);
+ 	 	 	result.simulation=runSimulation([dice[0]],[dice[1]],trials);
 	 	 	var end = new Date().getTime();
 			try{
-				result.probFrac1=calculateProbFrac(firstDiceArray,secondDiceArray);
-				result.probFrac2=calculateProbFrac(secondDiceArray,firstDiceArray);
+				result.probFrac1=calculateProbFrac([dice[0]],[dice[1]]);
+				result.probFrac2=calculateProbFrac([dice[1]],[dice[0]]);
 			}catch(err){
 				console.log(err);
 				result.probFrac1 = "Cannot calculate exact";
 				result.probFrac2 = "Cannot calculate exact";
 			}
-			result.prob1=calculateProb(firstDiceArray,secondDiceArray);
-			result.prob2=calculateProb(secondDiceArray,firstDiceArray);
+			result.prob1=calculateProb([dice[0]],[dice[1]]);
+			result.prob2=calculateProb([dice[1]],[dice[0]]);
 	
 			document.getElementById("simulPerSecond").value=(trials*1000/(end-start));
 			document.getElementById("experimentalOut1").value=result.simulation[0];	
@@ -29,11 +27,20 @@ window.onload = function(){
 			document.getElementById("theoreticalOutFrac2").value=result.probFrac2;
 		}
 	}
-	var showDice = function(htmlInputId){
-		alert(parse(document.getElementById(htmlInputId).value).map(createDie).join('\n'));
+	var updateDice = function(){
+		var firstDice = document.getElementById("firstIn").value;
+		var secondDice = document.getElementById("secondIn").value;
+		var firstDiceArray = parse(firstDice).map(createDie);
+	 	var secondDiceArray = parse(secondDice).map(createDie);
+ 	 	dice[0] = firstDiceArray[0];
+ 	 	dice[1] = secondDiceArray[0];
+	}
+	var showDice = function(index){
+		updateDice();
+		alert(dice[index]);
 	}
 	var rollDice = function(htmlInputId){
-		alert(parse(document.getElementById(htmlInputId).value).map(createDie).map(function(thing){return thing.roll();}).join('\n'));
+		alert(dice[index].roll());
 	}
 	var randInt = function(max) {//[0..max)
   		return Math.floor(Math.random() * max);
