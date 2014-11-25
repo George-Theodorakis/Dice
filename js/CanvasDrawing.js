@@ -1,4 +1,4 @@
-var drawOnCanvas = function(canvas, probModel){
+var drawOnCanvas = function(canvas, probModel,params){
 	var fillColor = "#44aa22";
 	var outlineColor = "#225511";
 	
@@ -9,20 +9,34 @@ var drawOnCanvas = function(canvas, probModel){
 	var height = canvas.height;
 	context.beginPath();
 	context.clearRect(0,0,width,height);
-	var uniques = probModel.uniques;
-	var maxSize = probModel.maxValue;
-	var maxValue = probModel.array.length-1;
+	var maxSize = params.maxSize;
+	var maxValue = params.maxValue;
+	drawWithParams(context,0,0,width,height,probModel,maxSize*probModel.maxValue,maxValue);
+}
+var drawWithParams(context,xleft,ytop,width,height,probModel,maxSize,maxValue){
 	probModel.array.forEach(function(size,value){
 		var topy = height*(1-size/maxSize);
 		var leftx = width*(value-1)/maxValue;
 		var rightx = width*(value)/maxValue;
 		context.beginPath();
-		context.rect(leftx,topy,rightx-leftx,height-topy);
+		context.rect(xleft+leftx,ytop+topy,rightx-leftx,height-topy);//sorry about these variable names
 		context.fill();
 		context.stroke();
 	});
 }
+var calculateParams(probModels){
+	//we want each to be scaled relative to each other - if one goes up to 100, the other should.  Constant bar area = same probability
+	var maxSize=0,maxValue=0;
+	probModels.forEach(function(probModel){
+		maxSize = Math.max(maxSize,probModel.maxValue/probModel.count);
+		maxValue = Math.max(maxValue,probModel.array.length-1);
+	});
+	return {maxSize:maxSize, maxValue:maxValue};
+}
 var drawCanvases = function(){
-	drawOnCanvas(document.getElementById("canvas1"),dice[0].probModel);
-	drawOnCanvas(document.getElementById("canvas2"),dice[1].probModel);
+	var probs = dice.map(function(die){return die.probModel;});
+	var params = calculateParams(probs);
+	drawOnCanvas(document.getElementById("canvas1"),probs[0],params);
+	
+	drawOnCanvas(document.getElementById("canvas2"),probs[1],params);
 }
