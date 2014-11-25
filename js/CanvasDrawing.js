@@ -2,14 +2,13 @@ var drawOnCanvas = function(canvas, probModel){
 	var fillColor = "#44aa22";
 	var outlineColor = "#225511";
 	
-	var width = canvas.width;
-	var height = canvas.height;
 	var context = canvas.getContext("2d");
-	context.fillStyle="#ffffff";
-	context.rect(0,0,width,height);
-	context.fill();
 	context.fillStyle=fillColor;
 	context.strokeStyle=outlineColor;
+	var width = canvas.width;
+	var height = canvas.height;
+	context.beginPath();
+	context.clearRect(0,0,width,height);
 	var uniques = probModel.uniques;
 	var maxSize = probModel.maxValue;
 	var maxValue = probModel.array.length-1;
@@ -17,6 +16,7 @@ var drawOnCanvas = function(canvas, probModel){
 		var topy = height*(1-size/maxSize);
 		var leftx = width*(value-1)/maxValue;
 		var rightx = width*(value)/maxValue;
+		context.beginPath();
 		context.rect(leftx,topy,rightx-leftx,height-topy);
 		context.fill();
 		context.stroke();
