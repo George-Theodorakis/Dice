@@ -4,6 +4,7 @@ window.onload = function(){
 			var trials = document.getElementById("trials").value;
 	 	 	var result = {};
 	 	 	updateDice();
+	 	 	drawCanvases();
  	 		var start = new Date().getTime();			
  	 	 	result.simulation=runSimulation([dice[0]],[dice[1]],trials);
 	 	 	var end = new Date().getTime();
