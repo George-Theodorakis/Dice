@@ -31,25 +31,26 @@
 		this.array.forEach(function(quantity,value){
 			count+=quantity;
 			variance+=quantity*(value-mean)*(value-mean);
-			if(!quartilesLow[1]&&count>=quantity/4){
+			if(!quartilesLow[1]&&count>=this.count/4){
 				quartilesLow[1]=value;
 			}		
-			if(!quartilesHigh[1]&&count>quantity/4){
+			if(!quartilesHigh[1]&&count>this.count/4){
 				quartilesHigh[1]=value;
 			}
-			if(!quartilesLow[2]&&count>=quantity/2){
+			if(!quartilesLow[2]&&count>=this.count/2){
 				quartilesLow[2]=value;
 			}
-			if(!quartilesHigh[2]&&count>quantity/2){
+			if(!quartilesHigh[2]&&count>this.count/2){
 				quartilesHigh[2]=value;
 			}
-			if(!quartilesLow[3]&&count>=3*quantity/4){
+			if(!quartilesLow[3]&&count>=3*this.count/4){
 				quartilesLow[3]=value;
 			}
-			if(!quartilesHigh[3]&&count>3*quantity/4){
+			if(!quartilesHigh[3]&&count>3*this.count/4){
 				quartilesHigh[3]=value;
 			}
 		});
+		variance = variance/count;//normalize
 		this.variance=variance;
 		this.stdev = Math.sqrt(variance);
 		var quartiles = [];
