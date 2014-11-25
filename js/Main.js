@@ -39,7 +39,7 @@ window.onload = function(){
 		updateDice();
 		alert(dice[index]);
 	}
-	var rollDice = function(htmlInputId){
+	var rollDice = function(index){
 		alert(dice[index].roll());
 	}
 	var randInt = function(max) {//[0..max)
