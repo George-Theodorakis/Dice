@@ -3,7 +3,11 @@ span.input {
   font-weight:bold;
 }
 div.graph {
-  float:right;
+  float:left;
+  margin:5px;
   border-style:solid;
   border-width:1px;
+}
+div.graphContainer {
+  float:right;
 }
