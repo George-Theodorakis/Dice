@@ -40,6 +40,7 @@ window.onload = function(){
 		alert(dice[index]);
 	}
 	var rollDice = function(index){
+		updateDice();
 		alert(dice[index].roll());
 	}
 	var randInt = function(max) {//[0..max)
