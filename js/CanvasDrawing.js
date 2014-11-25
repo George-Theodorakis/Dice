@@ -9,11 +9,11 @@ var drawOnCanvas = function(canvas, probModel){
 	var height = canvas.height;
 	var uniques = probModel.uniques;
 	var maxSize = probModel.maxValue;
-	var maxValue = probModel.array.length;
+	var maxValue = probModel.array.length-1;
 	probModel.array.forEach(function(size,value){
-		var topy = height*size/maxSize;
-		var leftx = width*value/maxValue;
-		var rightx = width*(value+1)/maxValue;
+		var topy = height*(1-size/maxSize);
+		var leftx = width*(value-1)/maxValue;
+		var rightx = width*(value)/maxValue;
 		context.rect(leftx,topy,rightx-leftx,height-topy);
 		context.fill();
 		context.stroke();
