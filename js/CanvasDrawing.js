@@ -24,7 +24,7 @@ var drawWithParams = function(context,xleft,ytop,width,height,probModel,maxSize,
 		context.stroke();
 	});
 }
-var calculateParams(probModels){
+var calculateParams = function(probModels){
 	//we want each to be scaled relative to each other - if one goes up to 100, the other should.  Constant bar area = same probability
 	var maxSize=0,maxValue=0;
 	probModels.forEach(function(probModel){
