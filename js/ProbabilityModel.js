@@ -6,6 +6,7 @@
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
 		this.maxValue=0;
+		this.sum=0;
 	}
 	ProbabilityModel.prototype.add = function(value,quantity){
 		this.cachedCdf = {};
@@ -15,8 +16,16 @@
 			this.array[value]=0;
 		}
 		this.count+=quantity;
+		this.sum+=value*quantity;
 		this.array[value]+=quantity;
+		this.stdev=undefined;
 		this.maxValue = Math.max(this.maxValue,this.array[value]);
+	}
+	ProbabilityModel.prototype.standardDeviation = function(){
+		if(stdev===undefined){
+			//finish later
+		}
+		return stdev;
 	}
 	ProbabilityModel.prototype.cdfTotal = function(value){
 		if(this.cachedCdf[value]===undefined){
