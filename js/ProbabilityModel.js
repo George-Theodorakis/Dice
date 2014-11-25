@@ -16,7 +16,7 @@
 		}
 		this.count+=quantity;
 		this.array[value]+=quantity;
-		this.maxValue = Math.max(this.mavValue,this.array[value]);
+		this.maxValue = Math.max(this.maxValue,this.array[value]);
 	}
 	ProbabilityModel.prototype.cdfTotal = function(value){
 		if(this.cachedCdf[value]===undefined){
