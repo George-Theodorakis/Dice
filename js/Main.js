@@ -1,4 +1,4 @@
-var dice;
+var dice = [];
 window.onload = function(){
 		document.getElementById("button").onclick = function(){
 			var trials = document.getElementById("trials").value;
