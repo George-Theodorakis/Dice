@@ -16,6 +16,16 @@
 </div>
 
 <div>
+
+ <div class="graph">
+  <div class="graph">
+   <canvas id="canvas1" width=400px height=200px ></canvas>
+  </div>
+  <div class="graph">
+   <canvas id="canvas2" width=400px height=200px ></canvas>
+  </div>
+ </div>
+ 
 <p>Player 1 Dice <Input id="firstIn" value=6> <Button type="button" onclick="showDice(0)">Show Dice</Button> <Button type="button" onclick="rollDice(0)">Roll Dice</Button></p>
 <p>Player 2 Dice <Input id="secondIn" value=6> <Button type="button" onclick="showDice(1)">Show Dice</Button> <Button type="button" onclick="rollDice(1)">Roll Dice</Button></p>
 <p>Number of trials <Input id="trials" value=10000></p>
@@ -36,5 +46,6 @@
 <script src = "js/MultiDie.js"></script>
 <script src = "js/Main.js"></script>
 <script src = "js/Fraction.js"></script>
+<script src = "js/CanvasDrawing.js"></script>
 </body>
 </html>
