@@ -49,7 +49,7 @@
 			if(!quartilesHigh[3]&&count>3*this.count/4){
 				quartilesHigh[3]=value;
 			}
-		});
+		},this);
 		variance = variance/count;//normalize
 		this.variance=variance;
 		this.stdev = Math.sqrt(variance);
