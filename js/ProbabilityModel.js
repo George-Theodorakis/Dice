@@ -5,6 +5,7 @@
 		this.array=[];
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
+		this.minIndex=Infinity;
 		this.maxValue=0;
 		this.sum=0;
 		this.calculated=false;
@@ -21,6 +22,7 @@
 		this.array[value]+=quantity;
 		this.calculated=false;
 		this.maxValue = Math.max(this.maxValue,this.array[value]);
+		this.minIndex = Math.min(this.minIndex,value);
 	}
 	ProbabilityModel.prototype.calculate = function(){
 		var mean = this.sum/this.count;
@@ -31,10 +33,10 @@
 		this.array.forEach(function(quantity,value){
 			count+=quantity;
 			variance+=quantity*(value-mean)*(value-mean);
-			if(!quartilesLow[1]&&count>=this.count/4){
+			if(!quartilesLow[1]&&count>this.count/4-.5){
 				quartilesLow[1]=value;
 			}		
-			if(!quartilesHigh[1]&&count>this.count/4){
+			if(!quartilesHigh[1]&&count>=this.count/4+.5){
 				quartilesHigh[1]=value;
 			}
 			if(!quartilesLow[2]&&count>=this.count/2){
@@ -43,10 +45,10 @@
 			if(!quartilesHigh[2]&&count>this.count/2){
 				quartilesHigh[2]=value;
 			}
-			if(!quartilesLow[3]&&count>=3*this.count/4){
+			if(!quartilesLow[3]&&count>3*this.count/4-.5){
 				quartilesLow[3]=value;
 			}
-			if(!quartilesHigh[3]&&count>3*this.count/4){
+			if(!quartilesHigh[3]&&count>=3*this.count/4+.5){//don't worry about how this works, assuming it works
 				quartilesHigh[3]=value;
 			}
 		},this);
@@ -54,7 +56,7 @@
 		this.variance=variance;
 		this.stdev = Math.sqrt(variance);
 		var quartiles = [];
-		quartiles[0]=0;//todo make this min
+		quartiles[0]=this.minIndex;
 		quartiles[2]=(quartilesLow[2]+quartilesHigh[2])/2;
 		var lowWeight,heightWeight;//for first quartile, flipped for third
 		if(this.count%2==0){
@@ -70,7 +72,7 @@
 		quartiles[1]=quartilesLow[1]*lowWeight+quartilesHigh[1]*highWeight;
 		quartiles[3] = quartilesLow[3]*highWeight+quartilesHigh[3]*lowWeight;
 		quartiles[4] = this.maxValue;
-		this.quartiles=quartiles;
+		this._quartiles=quartiles;
 	}
 	
 	ProbabilityModel.prototype.mean = function(){
