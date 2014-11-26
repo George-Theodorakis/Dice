@@ -53,8 +53,8 @@
 			}
 		},this);
 		variance = variance/count;//normalize
-		this.variance=variance;
-		this.stdev = Math.sqrt(variance);
+		this._variance=variance;
+		this._stdev = Math.sqrt(variance);
 		var quartiles = [];
 		quartiles[0]=this.minIndex;
 		quartiles[2]=(quartilesLow[2]+quartilesHigh[2])/2;
@@ -71,26 +71,26 @@
 		}
 		quartiles[1]=quartilesLow[1]*lowWeight+quartilesHigh[1]*highWeight;
 		quartiles[3] = quartilesLow[3]*highWeight+quartilesHigh[3]*lowWeight;
-		quartiles[4] = this.maxValue;
+		quartiles[4] = this.array.length-1;
 		this._quartiles=quartiles;
 	}
 	
 	ProbabilityModel.prototype.mean = function(){
 		return this.sum/this.count;
 	}
-	ProbabilityModel.prototype.standardDeviation = function(){
+	ProbabilityModel.prototype.stDev = function(){
 		if(!this.calculated){
 			this.calculate();
 			this.calculated=true;
 		}
-		return this.stdev;
+		return this._stdev;
 	}
 	ProbabilityModel.prototype.quartiles = function(){
 		if(!this.calculated){
 			this.calculate();
 			this.calculated=true;
 		}
-		return this.quartiles;
+		return this._quartiles;
 	}
 	ProbabilityModel.prototype.cdfTotal = function(value){
 		if(this.cachedCdf[value]===undefined){
