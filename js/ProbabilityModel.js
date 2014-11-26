@@ -62,7 +62,7 @@
 		if(this.count%2==0){
 			lowWeight=.5;
 			highWeight=.5;
-		}else if((this.count+1)%4==0){
+		}else if((this.count+1)%4!=0){
 			lowWeight=.25;
 			highWeight=.75;
 		}else{
