@@ -19,7 +19,7 @@
 		this.count+=quantity;
 		this.sum+=value*quantity;
 		this.array[value]+=quantity;
-		this.calculate=false;
+		this.calculated=false;
 		this.maxValue = Math.max(this.maxValue,this.array[value]);
 	}
 	ProbabilityModel.prototype.calculate = function(){
