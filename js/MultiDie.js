@@ -75,6 +75,7 @@ function MultiDie(){};
 		this.dice=dice;
 		this.createSideValues();
 	}
+	SubtractDie.prototype = new MultiDie();
 	SubtractDie.prototype.possibleCombinations = function(){
 		var newProb = new ProbabilityModel();
 		this.dice[0].probModel.array.forEach(function(q1,key1){
@@ -84,7 +85,6 @@ function MultiDie(){};
 		},this);
 		return newProb;
 	}
-	SubtractDie.prototype = new MultiDie();
 	SubtractDie.prototype.identity=undefined;
 	SubtractDie.prototype.name = "subtract";
 	SubtractDie.prototype.operation = function(a,b){return Number(a)-Number(b);}
