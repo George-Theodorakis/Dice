@@ -10,7 +10,7 @@ var drawOnCanvas = function(canvas, probModel,params){
 	context.beginPath();
 	context.clearRect(0,0,width,height);
 	var maxSize = params.maxSize;
-	var maxValue = params.maxValue;
+	var maxValue = params.maxQuantity;
 	drawWithParams(context,0,0,width,height,probModel,maxSize*probModel.count,maxValue);
 }
 var drawWithParams = function(context,xleft,ytop,width,height,probModel,maxSize,maxValue){
@@ -28,7 +28,7 @@ var calculateParams = function(probModels){
 	//we want each to be scaled relative to each other - if one goes up to 100, the other should.  Constant bar area = same probability
 	var maxSize=0,maxValue=0;
 	probModels.forEach(function(probModel){
-		maxSize = Math.max(maxSize,probModel.maxValue/probModel.count);
+		maxSize = Math.max(maxSize,probModel.maxQuantity/probModel.count);
 		maxValue = Math.max(maxValue,probModel.array.length-1);
 	});
 	return {maxSize:maxSize, maxValue:maxValue};
