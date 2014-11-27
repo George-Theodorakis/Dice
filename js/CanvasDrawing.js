@@ -10,6 +10,7 @@ var drawOnCanvas = function(canvas, probModel,params){
 	context.beginPath();
 	context.clearRect(0,0,width,height);
 	var maxSize = params.maxSize;
+	
 	var maxValue = params.maxQuantity;
 	drawWithParams(context,0,0,width,height,probModel,maxSize*probModel.count,maxValue);
 }
