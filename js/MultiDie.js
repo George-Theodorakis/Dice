@@ -70,4 +70,18 @@ function MultiDie(){};
 	MaxDie.prototype = new MultiDie();
 	MaxDie.prototype.identity=0;//negative infinity
 	MaxDie.prototype.name = "max"
-	MaxDie.prototype.operation = function(a,b){return Math.max(a,b);}
+	MaxDie.prototype.operation = function(a,b){return Math.max(a,b);}function AddDie(dice){
+		this.dice=dice;
+		this.createSideValues();
+		
+	};
+	function SubtractDie(dice){//behavior undefined when given more than 2 dice
+		this.dice=dice;
+		this.createSideValues();
+	}
+	SubtractDie.prototype = new MultiDie();
+	SubtractDie.prototype.identity=0;
+	SubtractDie.prototype.name = "subtract";
+	SubtractDie.prototype.operation = function(a,b){return Number(a)-Number(b);}
+
+	
