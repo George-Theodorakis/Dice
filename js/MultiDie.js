@@ -75,8 +75,17 @@ function MultiDie(){};
 		this.dice=dice;
 		this.createSideValues();
 	}
+	SubtractDie.prototype.possibleCombinations = function(){
+		var newProb = new ProbabilityModel();
+		this.dice[0].probModel.array.forEach(function(q1,key1){
+			this.dice[1].probModel.array.forEach(function(q2,key2
+				newProb.add(this.operation(key1,key2),q1*q2);
+			},this);
+		},this);
+		return newProb;
+	}
 	SubtractDie.prototype = new MultiDie();
-	SubtractDie.prototype.identity=0;
+	SubtractDie.prototype.identity=undefined;
 	SubtractDie.prototype.name = "subtract";
 	SubtractDie.prototype.operation = function(a,b){return Number(a)-Number(b);}
 
