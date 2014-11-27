@@ -1,27 +1,51 @@
 //this whole class may need working around javascript type confusion
+var negOffset = 1<<50;//close to floating point precision limit.
 	function ProbabilityModel(){
 		this.count=0;
 		this.uniques=0;
 		this.array=[];
+		this.arrayNeg=[];
+		this.arrayNegAsc=[];
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
 		this.minIndex=Infinity;
-		this.maxValue=0;
+		this.maxQuantity=0;
 		this.sum=0;
 		this.calculated=false;
+		this.hasNegatives=false;
 	}
 	ProbabilityModel.prototype.add = function(value,quantity){
+		var arr = this.array;
+		if(value<0){//support for negative indices
+			arr=this.arrayNeg;
+			this.hasNegatives=true;
+			var negVal = -value
+			this.cachedCdf = {};
+			this.cachedCdfFrac = {};
+			if(arr[negVal]===undefined){
+				this.uniques++;
+				arr[negVal]=0;
+			}
+			this.count+=quantity;
+			this.sum+=value*quantity;
+			arr[negVal]+=quantity;
+			this.calculated=false;
+			this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
+			this.minIndex = Math.min(this.minIndex,value);
+			this.array[value]=arr[negVal];
+			this.arrNegAsc[value+negOffset]=arr[negVal];
+		}
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
-		if(this.array[value]===undefined){
+		if(arr[value]===undefined){
 			this.uniques++;
-			this.array[value]=0;
+			arr[value]=0;
 		}
 		this.count+=quantity;
 		this.sum+=value*quantity;
-		this.array[value]+=quantity;
+		arr[value]+=quantity;
 		this.calculated=false;
-		this.maxValue = Math.max(this.maxValue,this.array[value]);
+		this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
 		this.minIndex = Math.min(this.minIndex,value);
 	}
 	ProbabilityModel.prototype.calculate = function(){
@@ -30,6 +54,31 @@
 		var variance=0;
 		var quartilesLow = [0];
 		var quartilesHigh = [0];
+		if(this.hasNegatives){
+			this.arrayNegAsc.forEach(function(quantity,value){
+				value-=negOffset;
+				count+=quantity;
+				variance+=quantity*(value-mean)*(value-mean);
+				if(!quartilesLow[1]&&count>this.count/4-.5){
+					quartilesLow[1]=value;
+				}		
+				if(!quartilesHigh[1]&&count>=this.count/4+.5){
+					quartilesHigh[1]=value;
+				}
+				if(!quartilesLow[2]&&count>=this.count/2){
+					quartilesLow[2]=value;
+				}
+				if(!quartilesHigh[2]&&count>this.count/2){
+					quartilesHigh[2]=value;
+				}
+				if(!quartilesLow[3]&&count>3*this.count/4-.5){
+					quartilesLow[3]=value;
+				}
+				if(!quartilesHigh[3]&&count>=3*this.count/4+.5){//don't worry about how this works, assuming it works
+					quartilesHigh[3]=value;
+				}
+			},this);
+		}
 		this.array.forEach(function(quantity,value){
 			count+=quantity;
 			variance+=quantity*(value-mean)*(value-mean);
@@ -102,6 +151,12 @@
 				this.cachedCdf[value] = total;
 			}else{
 				var total=0;
+				this.arrayNegAsc.forEach(function(quantity,i){
+					i-=negOffset;
+					if(i<=value){
+						total+=quantity;
+					}
+				},this);
 				this.array.forEach(function(quantity,i){
 					if(i<=value){
 						total+=quantity;
@@ -116,14 +171,19 @@
 		return this.cdfTotal(value)/this.count;
 	}
 	ProbabilityModel.prototype.pdf = function(value){
-		return this.cdf(value)-this.cdf(value-1);
+		var num = this.array[value];
+		if(num===undefined){
+			num=0;
+		}
+		return num/this.count;
 	}
 	ProbabilityModel.prototype.cdfFrac = function(value){
 		return new Fraction(this.cdfTotal(value),this.count);
 	}
 	ProbabilityModel.prototype.pdfFrac = function(value){
-		return this.cdfFrac(value).subtract(this.cdfFrac(value-1));
-	}
-	ProbabilityModel.prototype.chooseRandom = function(){
-		var result = randInt(this.count);
+		var num = this.array[value];
+		if(num===undefined){
+			num=0;
+		}
+		return new Fraction(num,this.count);
 	}
