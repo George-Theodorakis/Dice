@@ -1,5 +1,5 @@
 //this whole class may need working around javascript type confusion
-var negOffset = 1<<50;//close to floating point precision limit.
+var negOffset = (1<<25)*(1<<25);//close to floating point precision limit.
 	function ProbabilityModel(){
 		this.count=0;
 		this.uniques=0;
@@ -33,20 +33,21 @@ var negOffset = 1<<50;//close to floating point precision limit.
 			this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
 			this.minIndex = Math.min(this.minIndex,value);
 			this.array[value]=arr[negVal];
-			this.arrNegAsc[value+negOffset]=arr[negVal];
+			this.arrayNegAsc[value+negOffset]=arr[negVal];
+		}else{
+			this.cachedCdf = {};
+			this.cachedCdfFrac = {};
+			if(arr[value]===undefined){
+				this.uniques++;
+				arr[value]=0;
+			}
+			this.count+=quantity;
+			this.sum+=value*quantity;
+			arr[value]+=quantity;
+			this.calculated=false;
+			this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
+			this.minIndex = Math.min(this.minIndex,value);
 		}
-		this.cachedCdf = {};
-		this.cachedCdfFrac = {};
-		if(arr[value]===undefined){
-			this.uniques++;
-			arr[value]=0;
-		}
-		this.count+=quantity;
-		this.sum+=value*quantity;
-		arr[value]+=quantity;
-		this.calculated=false;
-		this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
-		this.minIndex = Math.min(this.minIndex,value);
 	}
 	ProbabilityModel.prototype.calculate = function(){
 		var mean = this.sum/this.count;
