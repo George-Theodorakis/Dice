@@ -78,7 +78,7 @@ function MultiDie(){};
 	SubtractDie.prototype.possibleCombinations = function(){
 		var newProb = new ProbabilityModel();
 		this.dice[0].probModel.array.forEach(function(q1,key1){
-			this.dice[1].probModel.array.forEach(function(q2,key2
+			this.dice[1].probModel.array.forEach(function(q2,key2){
 				newProb.add(this.operation(key1,key2),q1*q2);
 			},this);
 		},this);
