@@ -1,86 +1,61 @@
 //this whole class may need working around javascript type confusion
-var negOffset = (1<<25)*(1<<25);//close to floating point precision limit.
+//this class relies on a specific usage - first all values are added, only then may the functionality be used.
 	function ProbabilityModel(){
 		this.count=0;
 		this.uniques=0;
 		this.array=[];
-		this.arrayNeg=[];
-		this.arrayNegAsc=[];
+		this.sortedArr=[];
+		this._lookup=[];
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
+		this.maxIndex=-Infinity;
 		this.minIndex=Infinity;
 		this.maxQuantity=0;
 		this.sum=0;
 		this.calculated=false;
 		this.hasNegatives=false;
+		this.sorted=false;
 	}
 	ProbabilityModel.prototype.add = function(value,quantity){
-		var arr = this.array;
-		if(value<0){//support for negative indices
-			arr=this.arrayNeg;
-			this.hasNegatives=true;
-			var negVal = -value
-			this.cachedCdf = {};
-			this.cachedCdfFrac = {};
-			if(arr[negVal]===undefined){
-				this.uniques++;
-				arr[negVal]=0;
-			}
-			this.count+=quantity;
-			this.sum+=value*quantity;
-			arr[negVal]+=quantity;
-			this.calculated=false;
-			this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
-			this.minIndex = Math.min(this.minIndex,value);
-			this.array[value]=arr[negVal];
-			this.arrayNegAsc[value+negOffset]=arr[negVal];
-		}else{
-			this.cachedCdf = {};
-			this.cachedCdfFrac = {};
-			if(arr[value]===undefined){
-				this.uniques++;
-				arr[value]=0;
-			}
-			this.count+=quantity;
-			this.sum+=value*quantity;
-			arr[value]+=quantity;
-			this.calculated=false;
-			this.maxQuantity = Math.max(this.maxQuantity,arr[value]);
-			this.minIndex = Math.min(this.minIndex,value);
+		this.cachedCdf = {};
+		this.cachedCdfFrac = {};
+		if(this.array[value]===undefined){
+			this.uniques++;
+			this.array[value]=0;
+			this._lookup[value]=this.sortedArr.length;
+			this.sortedArr.push([value,0]);
 		}
+		this.count+=quantity;
+		this.sum+=value*quantity;
+		this.array[value]+=quantity;
+		this.sortedArr[this._lookup[value]][1]+=quantity;
+		this.calculated=false;
+		this.maxQuantity = Math.max(this.maxQuantity,this.array[value]);
+		this.minIndex = Math.min(this.minIndex,value);
+		this.maxIndex = Math.max(this.maxIndex,value);
+	}
+	ProbabilityModel.prototype.sort = function(){
+		this.sortedArr.sort(function(a,b){
+			if(a[0]<b[0]){
+				return -1;
+			}else{
+				return 1;//these values should never be duplicated, never need to return 0
+			}
+		});
+		this.sorted=true;
 	}
 	ProbabilityModel.prototype.calculate = function(){
+		if(!this.sorted){
+			this.sort();
+		}
 		var mean = this.sum/this.count;
 		var count=0;
 		var variance=0;
 		var quartilesLow = [0];
 		var quartilesHigh = [0];
-		if(this.hasNegatives){
-			this.arrayNegAsc.forEach(function(quantity,value){
-				value-=negOffset;
-				count+=quantity;
-				variance+=quantity*(value-mean)*(value-mean);
-				if(!quartilesLow[1]&&count>this.count/4-.5){
-					quartilesLow[1]=value;
-				}		
-				if(!quartilesHigh[1]&&count>=this.count/4+.5){
-					quartilesHigh[1]=value;
-				}
-				if(!quartilesLow[2]&&count>=this.count/2){
-					quartilesLow[2]=value;
-				}
-				if(!quartilesHigh[2]&&count>this.count/2){
-					quartilesHigh[2]=value;
-				}
-				if(!quartilesLow[3]&&count>3*this.count/4-.5){
-					quartilesLow[3]=value;
-				}
-				if(!quartilesHigh[3]&&count>=3*this.count/4+.5){//don't worry about how this works, assuming it works
-					quartilesHigh[3]=value;
-				}
-			},this);
-		}
-		this.array.forEach(function(quantity,value){
+		this.sortedArr.forEach(function(pair){
+			var quantity = pair[1];
+			var value = pair[0];
 			count+=quantity;
 			variance+=quantity*(value-mean)*(value-mean);
 			if(!quartilesLow[1]&&count>this.count/4-.5){
@@ -143,6 +118,9 @@ var negOffset = (1<<25)*(1<<25);//close to floating point precision limit.
 		return this._quartiles;
 	}
 	ProbabilityModel.prototype.cdfTotal = function(value){
+		if(!this.sorted){
+			this.sort();
+		}
 		if(this.cachedCdf[value]===undefined){
 			if(this.cachedCdf[value-1]!==undefined){
 				var total = this.cachedCdf[value-1];
@@ -152,13 +130,9 @@ var negOffset = (1<<25)*(1<<25);//close to floating point precision limit.
 				this.cachedCdf[value] = total;
 			}else{
 				var total=0;
-				this.arrayNegAsc.forEach(function(quantity,i){
-					i-=negOffset;
-					if(i<=value){
-						total+=quantity;
-					}
-				},this);
-				this.array.forEach(function(quantity,i){
+				this.sortedArr.forEach(function(pair){
+					var quantity = pair[1];
+					var i = pair[0];
 					if(i<=value){
 						total+=quantity;
 					}
