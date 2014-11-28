@@ -1,13 +1,4 @@
-var dice = [];
 
-	var updateDice = function(){
-		var firstDice = document.getElementById("firstIn").value;
-		var secondDice = document.getElementById("secondIn").value;
-		var firstDiceArray = parse(firstDice).map(createDie);
-	 	var secondDiceArray = parse(secondDice).map(createDie);
- 	 	dice[0] = firstDiceArray[0];
- 	 	dice[1] = secondDiceArray[0];
-	}
 	var showDice = function(index){
 		updateDice();
 		alert(dice[index]);
@@ -18,31 +9,6 @@ var dice = [];
 	}
 	var randInt = function(max) {//[0..max)
   		return Math.floor(Math.random() * max);
-	}
-	var maxRoll = function(dice){
-		var max = 0;
-		for(var i = 0; i < dice.length; i++){
-			max = Math.max(max,dice[i].roll());
-		}
-		return max;
-	}
-	var runSimulation = function(firstDice,secondDice,trials){
-		var wins1 = 0,wins2=0;
-		var diff;
-		for (var i = 0; i < trials; i++)
-		{
-			diff = maxRoll(firstDice)-maxRoll(secondDice);
-			if (diff>0)
-			{
-				wins1++;
-			}else if(diff<0){
-				wins2++;
-			}
-		}
-		
-		return [wins1/trials,wins2/trials];
-		
-	
 	}
 	var strsDice = ["add","multiply","max"];
  	var constrsDice = [AddDie,MultiplyDie,MaxDie];
@@ -56,13 +22,14 @@ var dice = [];
  			return new SimpleDie(input);
  		}
  	}
+	
 	var gcd = function(a, b) { //this function shamelessly copied from internet
 	 	 if ( ! b) { 
 	 	 	return a; 
 	 	 }
 	 	 return gcd(b, a % b); 
 	}
-	var isValid = function(string){//isNaN accepts "" " " and null, these are not numbers - note that for most cases this is !isNaN
+	var isValid = function(string){//isNaN accepts "" " " and null, these are not numbers - note that for most cases this function is !isNaN
 		if(isNaN(string)){
 			return false;
 		}
@@ -76,16 +43,33 @@ var dice = [];
 	}	
 	var openBracket = "{",closeBracket = "}";//nevermind, don't change these
 	var replacements = [["(","{add,"],["<","{multiply,"],["[","{max,"],[")","}"],[">","}"],["]","}"]];
+	
 	var parse = function(string){
-		var result = [];
-		var begin = [];
-		var beginIndex=0;
-		var bracket = 0;
+		//preprocessing
+		var tempReplacements = [];
+		var strs = string.split(";");
+		string=strs[strs.length-1];
+		for(var i = 0; i < strs.length-1; i++){
+			tempReplacements.push(strs[i].split("="));
+		}
+		tempReplacements.forEach(function(arr){
+			while(string.indexOf(arr[0])>-1){
+				string=string.replace(arr[0],arr[1]);
+			}
+		});
 		replacements.forEach(function(arr){
 			while(string.indexOf(arr[0])>-1){
 				string=string.replace(arr[0],arr[1]);
 			}
 		});
+		return recursiveParse(string);
+	}
+	var recursiveParse = function(string){
+		var result = [];
+		var begin = [];
+		var beginIndex=0;
+		var bracket = 0;
+		
 		string=string+',';
 		for(var i = 0; i < string.length; i++){
 			if(string.charAt(i)===closeBracket){
@@ -120,7 +104,7 @@ var dice = [];
 				iterations=split[1];	
 			}
 			if(temp.indexOf(openBracket)>-1){
-				var tempresult = parse(temp.substring(1,temp.length-1));
+				var tempresult = recursiveParse(temp.substring(1,temp.length-1));
 				temp = tempresult;
 			}
 			for(var i = 0; i < iterations; i++){

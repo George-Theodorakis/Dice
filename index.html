@@ -3,7 +3,7 @@
 <title>Probability Simulation</title>
 </head>
 <body>
-
+<div class="outerContainer">
 <div>
 <h1>This is a simulator for a game of chance</h1>
 <p>Two players each have a probability model based on rolling dice and performing operations on the results.</p>
@@ -17,27 +17,28 @@
 
 <div>
 
- <div class="graphContainer">
-  <div class="graph">
-   <canvas id="canvas1" width=400px height=200px ></canvas>
-  </div>
-  <div class="graph">
-   <canvas id="canvas2" width=400px height=200px ></canvas>
-  </div>
- </div>
- 
-<p>Player 1 Dice <Input id="firstIn" value=6> <Button type="button" onclick="showDice(0)">Show Dice</Button> <Button type="button" onclick="rollDice(0)">Roll Dice</Button></p>
-<p>Player 2 Dice <Input id="secondIn" value=6> <Button type="button" onclick="showDice(1)">Show Dice</Button> <Button type="button" onclick="rollDice(1)">Roll Dice</Button></p>
-<p>Number of trials <Input id="trials" value=10000></p>
-<p>Experimental Probability that Player 1 wins<Input id="experimentalOut1" disabled=true></p>
-<p>Experimental Probability that Player 2 wins<Input id="experimentalOut2" disabled=true></p>
-<p>Theoretical Probability that Player 1 wins<Input id="theoreticalOut1" disabled=true>   <Input id="theoreticalOutFrac1" disabled=true size=27></p>
-<p>Theoretical Probability that Player 2 wins<Input id="theoreticalOut2" disabled=true>   <Input id="theoreticalOutFrac2" disabled=true size=27></p>
-<p>Simulations per second <Input id="simulPerSecond" disabled=true></p>
-<p><Button type="button" id="button">Go!</Button></p>
+	Dice to simulate<input type="text" id="input" size=99></input><br>
+	Trials to run<input type="text" id="trials"></input>
+	<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
+	<div class="graphContainer">
+		<div class="graph">
+			<canvas id="canvas0" class="graph" width=600 height=300></canvas>
+			<div><input type="checkbox" id="norm0" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal0" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box0" onclick="drawCanvases()"></input>Display box plot</div>
+			<div>Experimental Probability of winning<input type="text" id="exOut1" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text"  id="theoOut1" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text" id="theoFOut1" disabled></input></div>
+		</div>
+		<div class="graph">
+			<canvas id="canvas1" class="graph" width=600 height=300></canvas>
+			<div><input type="checkbox" id="norm1" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal1" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box1" onclick="drawCanvases()"></input>Display box plot</div>
+			<div>Experimental Probability of winning<input type="text" id="exOut2" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text"  id="theoOut2" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text" id="theoFOut2" disabled></input></div>
+		</div>
+	</div>
 </div>
 
-
+</div>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src = "js/ProbabilityModel.js"></script>
 <script src = "js/Die.js"></script>
@@ -48,43 +49,100 @@
 <script src = "js/Fraction.js"></script>
 <script src = "js/CanvasDrawing.js"></script>
 <script>
+var dice = [];
 
-	var calculateProb = function(firstDice,secondDice){
-		return 1-new SubtractDie([firstDice[0],secondDice[0]]).cdf(0);
+	var updateDice = function(){
+		var input = document.getElementById("input");
+		dice = parse(input.value).map(createDie);
 	}
-	var calculateProbFrac = function(firstDice,secondDice){
-		return new Fraction(1,1).subtract(new SubtractDie([firstDice[0],secondDice[0]]).cdfFrac(0));
+	var calculateProb = function(firstDie,secondDice){
+		if(secondDice.length==0)return 1;
+		return 1-new SubtractDie([firstDie,new MaxDie(secondDice)]).cdf(0);
+	}
+	var calculateProbFrac = function(firstDie,secondDice){
+		if(secondDice.length==0)return new Fraction(1,1);
+		return new Fraction(1,1).subtract(new SubtractDie([firstDie,new MaxDie(secondDice)]).cdfFrac(0));
 	}
 	
-	window.onload = function(){
-		document.getElementById("button").onclick = function(){
-			var trials = document.getElementById("trials").value;
-	 	 	var result = {};
-	 	 	updateDice();
-	 	 	drawCanvases();
- 	 		var start = new Date().getTime();			
- 	 	 	result.simulation=runSimulation([dice[0]],[dice[1]],trials);
-	 	 	var end = new Date().getTime();
-			try{
-				result.probFrac1=calculateProbFrac([dice[0]],[dice[1]]);
-				result.probFrac2=calculateProbFrac([dice[1]],[dice[0]]);
-			}catch(err){
-				console.log(err);
-				result.probFrac1 = "Cannot calculate exact";
-				result.probFrac2 = "Cannot calculate exact";
+	var runSimulation = function(dice,trials){
+		var wins=[];
+		var result=[];
+		
+		for (var i = 0; i < trials; i++)
+		{
+			var max=dice[0].roll();
+			var maxIndex=0;
+			var tie=false;
+			for(var j = 1; j < dice.length; j++){
+				var roll = dice[j].roll();
+				if(roll>max){
+					max=roll;
+					maxIndex=j;
+					tie=false;
+				}else if(roll==max){
+					tie=true;
+				}
 			}
-			result.prob1=calculateProb([dice[0]],[dice[1]]);
-			result.prob2=calculateProb([dice[1]],[dice[0]]);
+			if(!tie){
+				wins[maxIndex]++;
+			}
+		}
+		for(var i = 0; i < wins.length; wins++){
+			wins[i]=wins[i]/trials;
+		}
+		return wins;
+		
 	
-			document.getElementById("simulPerSecond").value=(trials*1000/(end-start));
-			document.getElementById("experimentalOut1").value=result.simulation[0];	
-			document.getElementById("experimentalOut2").value=result.simulation[1];
-			document.getElementById("theoreticalOut1").value=result.prob1;
-			document.getElementById("theoreticalOutFrac1").value=result.probFrac1;
-			document.getElementById("theoreticalOut2").value=result.prob2;
-			document.getElementById("theoreticalOutFrac2").value=result.probFrac2;
+	}
+	var analyze = function(){
+	
+		var trials = document.getElementById("trials").value;
+	  	var result = {};
+	  	updateDice();
+	  	drawCanvases();
+ 	 	var start = new Date().getTime();			
+ 	  	result.simulation=runSimulation([dice[0],dice[1]],trials);
+	  	var end = new Date().getTime();
+		try{
+			result.probFrac1=calculateProbFrac(dice[0],[dice[1]]);
+			result.probFrac2=calculateProbFrac(dice[1],[dice[0]]);
+		}catch(err){
+			console.log(err);
+			result.probFrac1 = "Cannot calculate exact";
+			result.probFrac2 = "Cannot calculate exact";
+		}
+		result.prob1=calculateProb(dice[0],[dice[1]]);
+		result.prob2=calculateProb(dice[1],[dice[0]]);
+		document.getElementById("exOut1").value=result.simulation[0];	
+		document.getElementById("theoOut1").value=result.prob1;
+		document.getElementById("theoFOut1").value=result.probFrac1;
+		document.getElementById("exOut2").value=result.simulation[1];
+		document.getElementById("theoOut2").value=result.prob2;
+		document.getElementById("theoFOut2").value=result.probFrac2;
+	}
+	var drawCanvases = function(){
+		var probs = dice.map(function(die){return die.probModel;});
+		var flags = [];
+		for(var i = 0; i < dice.length; i++){
+			flags.push({histogram:true, box:document.getElementById("box"+i).checked,normal:document.getElementById("normal"+i).checked,normalize:document.getElementById("norm"+i).checked});
+		}
+		var normProbs = [];
+		for(var i = 0; i < dice.length; i++){
+			if(flags[i].normalize){
+				normProbs.push(probs[i]);
+			}
+		}
+		var normWindow = calculateWindow(normProbs);
+		for(var i = 0; i < dice.length; i++){
+			if(flags[i].normalize){
+				drawCanvas(document.getElementById("canvas" + i),probs[i],normWindow,flags[i]);
+			}else{
+				drawCanvas(document.getElementById("canvas" + i),probs[i],calculateWindow([probs[i]]),flags[i]);
+			}
 		}
 	}
+	
+
 </script>
 </body>
 </html>

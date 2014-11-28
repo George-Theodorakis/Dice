@@ -1,13 +1,16 @@
 span.input {
-  color:#008800;
-  font-weight:bold;
+	color:#008800;
+	font-weight:bold;
 }
 div.graph {
-  float:left;
-  margin:5px;
-  border-style:solid;
-  border-width:1px;
+	float:left;
+	margin:5px;
+	border-style:solid;
+	border-width:1px;
 }
 div.graphContainer {
-  float:right;
+}
+div.outerContainer{
+}
+canvas.graph{
 }
