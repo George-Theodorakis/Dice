@@ -12,5 +12,8 @@ div.graphContainer {
 }
 div.outerContainer{
 }
+div.graphTemplate{
+	display:none;
+}
 canvas.graph{
 }

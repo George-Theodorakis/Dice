@@ -77,7 +77,7 @@ var drawBoxPlot = function(context,probModel,window,width,height){
 	
 	
 	
-	//massive drawing call
+	//large drawing call
 	context.beginPath();
 	//left branch
 	context.moveTo(xs[0],ylow);

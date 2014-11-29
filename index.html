@@ -13,28 +13,23 @@
 <p>Operations on dice are represented by putting the dice in a type of brackets: <span class="input">()</span> are used for addition, <span class="input"><></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum on any given die.  For example, <span class="input">[6,6]</span> means rolling 2 six sided dice and taking the higher value between them.  These operations can be combined - <span class="input"><[6,6],[6,6],6></span> is perfectly valid.</p>
 <p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[6,6]</span>, <span class="input">[6:2]</span> can be used. <span class="input"><[6,6],[6,6],6></span> is the same as <span class="input"><[6:2]:2,6></span>.</p>
 <p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
-</div>
 
+</div>
 <div>
 
 	Dice to simulate<input type="text" id="input" size=99></input><br>
 	Trials to run<input type="text" id="trials"></input>
 	<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
-	<div class="graphContainer">
+	<div class="graphTemplate" id="graphTemplate">
 		<div class="graph">
-			<canvas id="canvas0" class="graph" width=600 height=300></canvas>
-			<div><input type="checkbox" id="norm0" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal0" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box0" onclick="drawCanvases()"></input>Display box plot</div>
-			<div>Experimental Probability of winning<input type="text" id="exOut1" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text"  id="theoOut1" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text" id="theoFOut1" disabled></input></div>
+			<canvas id="canvas%" class="graph" width=600 height=300></canvas>
+			<div><input type="checkbox" id="norm%" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal%" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box%" onclick="drawCanvases()"></input>Display box plot</div>
+			<div>Experimental Probability of winning<input type="text" id="exOut%" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text"  id="theoOut%" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text" id="theoFOut%" disabled></input></div>
 		</div>
-		<div class="graph">
-			<canvas id="canvas1" class="graph" width=600 height=300></canvas>
-			<div><input type="checkbox" id="norm1" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal1" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box1" onclick="drawCanvases()"></input>Display box plot</div>
-			<div>Experimental Probability of winning<input type="text" id="exOut2" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text"  id="theoOut2" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text" id="theoFOut2" disabled></input></div>
-		</div>
+	</div>
+	<div class="graphContainer" id="graphContainer">
 	</div>
 </div>
 
@@ -51,9 +46,16 @@
 <script>
 var dice = [];
 
-	var updateDice = function(){
+	var updateDice = function(){//this function does too much, it also updates DOM
 		var input = document.getElementById("input");
 		dice = parse(input.value).map(createDie);
+		var graphContainer = document.getElementById("graphContainer");
+		graphContainer.innerHTML = "";
+		var graphTemplate = document.getElementById("graphTemplate");
+		var graphHtml = graphTemplate.innerHTML;
+		for(var i = 0; i < dice.length; i++){
+			graphContainer.innerHTML = graphContainer.innerHTML + graphHtml.replace(/\%/g,i);
+		}
 	}
 	var calculateProb = function(firstDie,secondDice){
 		if(secondDice.length==0)return 1;
@@ -66,7 +68,9 @@ var dice = [];
 	
 	var runSimulation = function(dice,trials){
 		var wins=[];
-		var result=[];
+		for(var i = 0; i  < dice.length; i++){
+			wins[i]=0;
+		}
 		
 		for (var i = 0; i < trials; i++)
 		{
@@ -87,7 +91,7 @@ var dice = [];
 				wins[maxIndex]++;
 			}
 		}
-		for(var i = 0; i < wins.length; wins++){
+		for(var i = 0; i < dice.length; i++){
 			wins[i]=wins[i]/trials;
 		}
 		return wins;
@@ -101,9 +105,29 @@ var dice = [];
 	  	updateDice();
 	  	drawCanvases();
  	 	var start = new Date().getTime();			
- 	  	result.simulation=runSimulation([dice[0],dice[1]],trials);
+ 	  	result.simulation=runSimulation(dice,trials);
 	  	var end = new Date().getTime();
+		result.prob=[];
+		result.probFrac=[];
+		for(var i = 0; i < dice.length; i++){
+			result.prob.push(calculateProb(dice[i],dice.filter(function(val,index){return index!=i;})));
+		}
 		try{
+			for(var i = 0; i < dice.length; i++){
+				result.probFrac.push(calculateProbFrac(dice[i],dice.filter(function(val,index){return index!=i;})));
+			}
+		}catch(e){
+			for(var i = 0; i < dice.length; i++){
+				result.probFrac.push("Cannot calculate exact");
+			}
+		}
+		for(var i = 0; i < dice.length; i++){
+			document.getElementById("exOut"+i).value = result.simulation[i];
+			document.getElementById("theoOut"+i).value = result.prob[i];
+			document.getElementById("theoFOut"+i).value = result.probFrac[i];
+		}
+		//delete mr!
+		/*try{
 			result.probFrac1=calculateProbFrac(dice[0],[dice[1]]);
 			result.probFrac2=calculateProbFrac(dice[1],[dice[0]]);
 		}catch(err){
@@ -118,7 +142,7 @@ var dice = [];
 		document.getElementById("theoFOut1").value=result.probFrac1;
 		document.getElementById("exOut2").value=result.simulation[1];
 		document.getElementById("theoOut2").value=result.prob2;
-		document.getElementById("theoFOut2").value=result.probFrac2;
+		document.getElementById("theoFOut2").value=result.probFrac2;*/
 	}
 	var drawCanvases = function(){
 		var probs = dice.map(function(die){return die.probModel;});
