@@ -1,11 +1,32 @@
 <!doctype html><html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Probability Simulation</title>
+<title>CLT Demonstration</title>
 </head>
 <body>
 <div>
-<canvas id="canvas" width=1000 height=500></canvas>
+<div>Input die to average:<input type="text" id="input" text="(6:%)"></input><button onclick="demonstrate()">Go!</button><button onclick="stopTimer()">Stop</button></div>
+
+<div class="mainContainer">
+<div><b>Averaged Distribution</b></div>
+<div id="count"><br></div>
+<canvas id="canvas" width=800 height=400></canvas>
 </div>
+<div class="sideContainer">
+<div>Original Distribution</div>
+<canvas id="initCanvas" width=300 height=150></canvas>
+</div>
+</div>
+<style>
+div.sideContainer, div.mainContainer{
+	margin: 5px;
+	float:left;
+}
+canvas{
+	border-style:solid;
+	border-width:1px
+}
+
+</style>
 <script src = "js/ProbabilityModel.js"></script>
 <script src = "js/Die.js"></script>
 <script src = "js/SimpleDie.js"></script>
@@ -15,13 +36,34 @@
 <script src = "js/Fraction.js"></script>
 <script src = "js/CanvasDrawing.js"></script>
 <script>
-	var dieString = "(6:%)";
-	var iteration=1;
-	window.setInterval(function(){
-		var die = createDie(parse(dieString.replace(/\%/g,i++))[0]);
-		drawCanvas(document.getElementById("canvas"),die,calculateWindow([die]),{histogram:true,normal:true});
-	},500);
-
+	var stop=0;
+	var stopped=false;
+	var demonstrate = function(){ 
+		stopped=false;
+		window.clearInterval(stop);
+		var dieString = "("+document.getElementById("input").value+":%)";
+		var iteration=1;
+		var initDie = createDie(parse(document.getElementById("input").value)[0]);
+		drawCanvas(document.getElementById("initCanvas"),initDie.probModel,calculateWindow([initDie.probModel]),{histogram:true});
+		var redraw =function(){
+			var start = new Date().getTime();
+			document.getElementById("count").innerHTML = "n="+iteration;
+			var die = createDie(parse(dieString.replace(/\%/g,iteration++))[0]);
+			if(stopped){
+				return;//the timer has been stopped by alternate means
+			}
+			drawCanvas(document.getElementById("canvas"),die.probModel,calculateWindow([die.probModel]),{histogram:true,normal:true});
+			if(iteration>30 || (new Date().getTime()-start>1000)){//stop after 30 or if it's taking too long
+				stopTimer();
+			}
+		}
+		redraw();
+		stop = window.setInterval(redraw,1000);
+	}
+	var stopTimer = function(){
+		window.clearInterval(stop);
+		stopped=true;
+	}
 </script>
 </body>
 </html>
