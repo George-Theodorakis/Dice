@@ -46,6 +46,7 @@
 	
 	var parse = function(string){
 		//preprocessing
+		string=string.replace(/\s+/g,"");//remove whitespace
 		var tempReplacements = [];
 		var strs = string.split(";");
 		string=strs[strs.length-1];

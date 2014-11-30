@@ -8,12 +8,36 @@ div.graph {
 	border-style:solid;
 	border-width:1px;
 }
-div.graphContainer {
-}
-div.outerContainer{
-}
-div.graphTemplate{
+#graphTemplate{
 	display:none;
 }
 canvas.graph{
+}
+div.layer1, div.layer3, div.layer5{
+	border-color:#aaffbb;
+	background-color:#ddffee;
+}
+div.layer2, div.layer4, div.graph{
+	border-color:#66ff99;
+	background-color:#88ffaa;
+}
+div.layer1, div.layer2, div.layer3, div.layer4, div.layer5, div.graph{
+	margin:5px;
+	border-width:3px;
+	border-radius:3px;
+	border-style:solid;
+	padding:5px;
+}
+div.placeHolder{
+	clear:both;
+}
+body{
+	background-color:#88ffaa;
+	color:#004411;
+}
+h1,h2{
+	margin:5px;
+}
+p{
+	margin-left:5px;
 }

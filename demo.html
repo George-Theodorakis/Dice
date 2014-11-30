@@ -1,21 +1,7 @@
-<!doctype html><html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html>
 <head>
 <title>CLT Demonstration</title>
-</head>
-<body>
-<div>
-<div>Input die to average:<input type="text" id="input" text="(6:%)"></input><button onclick="demonstrate()">Go!</button><button onclick="stopTimer()">Stop</button></div>
-
-<div class="mainContainer">
-<div><b>Averaged Distribution</b></div>
-<div id="count"><br></div>
-<canvas id="canvas" width=800 height=400></canvas>
-</div>
-<div class="sideContainer">
-<div>Original Distribution</div>
-<canvas id="initCanvas" width=300 height=150></canvas>
-</div>
-</div>
+<link rel="stylesheet" type="text/css" href="css/style.css">
 <style>
 div.sideContainer, div.mainContainer{
 	margin: 5px;
@@ -23,7 +9,12 @@ div.sideContainer, div.mainContainer{
 }
 canvas{
 	border-style:solid;
-	border-width:1px
+	border-width:1px;
+	background-color:#ffffff;
+}
+span.err{
+	color:#ff0000;
+	float:right;
 }
 
 </style>
@@ -38,32 +29,67 @@ canvas{
 <script>
 	var stop=0;
 	var stopped=false;
+	var lastDie;
+	var nextDie;
+	var delay=200;
+	var timeout=1000;
 	var demonstrate = function(){ 
+		setStopMsg("");
+		lastDie=new SimpleDie(1);
 		stopped=false;
 		window.clearInterval(stop);
-		var dieString = "("+document.getElementById("input").value+":%)";
 		var iteration=1;
-		var initDie = createDie(parse(document.getElementById("input").value)[0]);
-		drawCanvas(document.getElementById("initCanvas"),initDie.probModel,calculateWindow([initDie.probModel]),{histogram:true});
+		nextDie = createDie(parse(document.getElementById("input").value)[0]);
+		drawCanvas(document.getElementById("initCanvas"),nextDie.probModel,calculateWindow([nextDie.probModel]),{histogram:true});
 		var redraw =function(){
 			var start = new Date().getTime();
-			document.getElementById("count").innerHTML = "n="+iteration;
-			var die = createDie(parse(dieString.replace(/\%/g,iteration++))[0]);
+			lastDie = new AddDie([lastDie,nextDie]);
 			if(stopped){
-				return;//the timer has been stopped by alternate means
-			}
-			drawCanvas(document.getElementById("canvas"),die.probModel,calculateWindow([die.probModel]),{histogram:true,normal:true});
-			if(iteration>30 || (new Date().getTime()-start>1000)){//stop after 30 or if it's taking too long
+				setStopMsg("Stopped by user");
+				return;
+			}if(lastDie.probModel.maxQuantity>1e300){
+				setStopMsg("Stopped: Overflow");
 				stopTimer();
+				return;
+			}else if (new Date().getTime()-start>timeout){
+				setStopMsg("Stopped: Timeout");
+				stopTimer();
+				return;
 			}
+			document.getElementById("count").innerHTML = "n="+(iteration++);
+			drawCanvas(document.getElementById("canvas"),lastDie.probModel,calculateWindow([lastDie.probModel]),{histogram:true,normal:true});
 		}
 		redraw();
-		stop = window.setInterval(redraw,1000);
+		stop = window.setInterval(redraw,delay);
 	}
 	var stopTimer = function(){
 		window.clearInterval(stop);
 		stopped=true;
 	}
+	var setStopMsg = function(msg){
+		document.getElementById("err").innerHTML=msg;
+	}
+	var userStopTimer = function(){
+		stopTimer();
+		setStopMsg("Stopped by user");
+	}
 </script>
+</head>
+<body>
+<div class="layer1">
+<div>Input die to average:<input type="text" id="input" text="(6:%)"></input><button onclick="demonstrate()">Go!</button><button onclick="userStopTimer()">Stop</button></div>
+
+<div class="layer2 mainContainer">
+<div><b>Averaged Distribution</b></div>
+<div><span id="count"><br></span><span class="err" id="err"></span></div>
+<canvas id="canvas" width=800 height=400></canvas>
+</div>
+<div class="layer2 sideContainer">
+<div>Original Distribution</div>
+<canvas id="initCanvas" width=300 height=150></canvas>
+</div>
+<div class="placeHolder">
+</div>
+</div>
 </body>
 </html>

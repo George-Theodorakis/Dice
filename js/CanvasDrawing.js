@@ -102,10 +102,12 @@ var drawBoxPlot = function(context,probModel,window,width,height){
 
 
 var drawNormalCurve = function(context, probModel,window,width,height){
-	var outlineColor = "#aa4422";
+	var outlineColor = "#dd4433";
 	context.strokeStyle = outlineColor;
 	context.beginPath();
-	var xstep=.5;
+	var initLineWidth=context.lineWidth;
+	context.lineWidth=2;
+	var xstep=1*(window.xmax-window.xmin)/width;
 	var mean = probModel.mean();
 	var stDev = probModel.stDev();
 	for(var x = window.xmin; x <window.xmax+xstep; x+=xstep){
@@ -113,6 +115,7 @@ var drawNormalCurve = function(context, probModel,window,width,height){
 		context.lineTo(transformX(x,width,window.xmin,window.xmax),height*(1-normPdf(zscore,stDev)/window.ymax));
 	}
 	context.stroke();
+	context.lineWidth=initLineWidth;
 }
 
 var normalMultiplier = 1/Math.sqrt(2*Math.PI);
