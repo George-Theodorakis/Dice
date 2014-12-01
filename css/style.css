@@ -14,12 +14,12 @@ div.graph {
 canvas.graph{
 }
 div.layer1, div.layer3, div.layer5{
-	border-color:#aaffbb;
-	background-color:#ddffee;
+	border-color:#99ff88;
+	background-color:#ddffd0;
 }
 div.layer2, div.layer4, div.graph{
-	border-color:#66ff99;
-	background-color:#88ffaa;
+	border-color:#66ff77;
+	background-color:#aaff9a;
 }
 div.layer1, div.layer2, div.layer3, div.layer4, div.layer5, div.graph{
 	margin:5px;
@@ -32,7 +32,7 @@ div.placeHolder{
 	clear:both;
 }
 body{
-	background-color:#88ffaa;
+	background-color:#aaff9a;
 	color:#004411;
 }
 h1,h2{
