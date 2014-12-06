@@ -1,0 +1,91 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script src = "js/ProbabilityModel.js"></script>
+<script src = "js/Die.js"></script>
+<script src = "js/SimpleDie.js"></script>
+<script src = "js/ComplexDie.js"></script>
+<script src = "js/MultiDie.js"></script>
+<script src = "js/Main.js"></script>
+<script src = "js/Fraction.js"></script>
+<script src = "js/CanvasDrawing.js"></script>
+
+
+<title>Distribution Testing</title>
+
+
+<style>
+div.table{
+	overflow:scroll;
+}
+</style>
+
+
+<script>
+	var makeTable = function(){
+		var input = document.getElementById("input").value;
+		var rows = Number(document.getElementById("rows").value)+1;
+		var cols = Number(document.getElementById("cols").value)+1;
+		var array = createArray(input,cols,rows);
+		var htmltable = createHTMLTable(rows,cols,array);
+		document.getElementById("table").innerHTML=htmltable;
+	}
+	var createArray = function(string,xmax,ymax){
+		var array = [];
+		for(var i = 0; i < ymax; i++){
+			array[i]=[];
+		}
+		array[0][0]="";
+		for(var i = 1; i < ymax; i++){
+			array[i][0]="y="+i;
+		}	
+		for(var i = 1; i < xmax; i++){
+			array[0][i]="x="+i;
+		}
+		for(var i = 1; i < ymax; i++){
+			for(var j = 1; j < xmax; j++){
+				var newString = "x="+j+";y="+i+";"+string;
+				var dice = parse(newString).map(createDie);
+				var sdie = new SubtractDie(dice);
+				array[i][j]=(1-sdie.cdf(0)).toPrecision(3);
+			}
+		}
+		return array;
+	}
+	var createHTMLTable = function(rows,cols,array){
+		var begin = "<table>";
+		var beginLine = "<tr>";
+		var beginElement = "<td>";
+		var endElement = "</td>";
+		var endLine = "</tr>";
+		var end = "</table>";
+		var str = begin;
+		for(var i = 0; i < rows; i++){
+			str+=beginLine;
+			for(var j = 0; j < cols; j++){
+				str+=beginElement;
+				str+=array[i][j];
+				str+=endElement;
+			}
+			str+=endLine;
+		}
+		str+=end;
+		return str;
+	}
+</script>
+</head>
+<body>
+<div class="layer1">
+	<div class="layer2">
+		Input Expression<input type="text" id="input"></input>rows<input type="text" id="rows" value="10"></input>columns<input type="text" id="cols" value="10"></input><button onclick="makeTable()">Go!</button>
+	</div>
+	<div class="layer2">
+		<div class="table" id="table">
+		</div>
+	</div>
+	
+</div>
+
+
+</body>
+</html>

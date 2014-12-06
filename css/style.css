@@ -1,20 +1,5 @@
-span.input {
-	color:#008800;
-	font-weight:bold;
-}
-div.graph {
-	float:left;
-	margin:5px;
-	border-style:solid;
-	border-width:1px;
-}
-#graphTemplate{
-	display:none;
-}
-canvas.graph{
-}
 div.layer1, div.layer3, div.layer5{
-	border-color:#99ff88;
+	border-color:#66aa55;
 	background-color:#ddffd0;
 }
 div.layer2, div.layer4, div.graph{

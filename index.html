@@ -1,40 +1,6 @@
 <html>
 <head>
 <title>Probability Simulation</title>
-</head>
-<body>
-<div class="layer1">
-<div class="layer2">
-<div class="layer3">
-<h1>Discrete Distribution Tool</h1>
-</div>
-<p>This is used for graphically analyzing discrete distributions</p>
-<div class="layer3"><h2>How to Use</h2></div>
-<p>There are two ways to define simple distributions:  Merely typing a number such as <span class="input">3</span> represents a discrete uniform distribution where integer values from 1 to 3 are equally likely, while listing numbers in brackets can also represent a distribution, where each listed number is equally likely.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>. </p>
-<p>Operations on distributions are represented by putting the distributions in a type of brackets: <span class="input">()</span> are used for addition, <span class="input"><></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum between any of the given distributions.  For example, <span class="input">[5,5]</span> means finding the maximum of two independent discrete uniform distributions of size 5.  These operations can be combined - <span class="input"><[6,6],[6,6],4></span> is perfectly valid.</p>
-<p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[7,7,7]</span>, <span class="input">[7:3]</span> can be used. <span class="input"><[6,6],[6,6],4></span> is the same as <span class="input"><[6:2]:2,4></span>.</p>
-<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
-
-</div>
-<div class="layer2">
-
-	Distributions to Analyze<input type="text" id="input" size=99></input><br>
-	Trials to run<input type="text" id="trials"></input>
-	<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
-	<div class="layer3" id="graphTemplate">
-		<div class="graph">
-			<canvas id="canvas%" class="graph" width=600 height=300></canvas>
-			<div><input type="checkbox" id="norm%" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal%" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box%" onclick="drawCanvases()"></input>Display box plot</div>
-			<div>Experimental Probability of winning<input type="text" id="exOut%" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text"  id="theoOut%" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text" id="theoFOut%" disabled></input></div>
-		</div>
-	</div>
-	<div class="layer3" id="graphContainer"><noscript>Sorry, this webpage relies on javascript</noscript>
-	</div>
-</div>
-
-</div>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src = "js/ProbabilityModel.js"></script>
 <script src = "js/Die.js"></script>
@@ -44,6 +10,22 @@
 <script src = "js/Main.js"></script>
 <script src = "js/Fraction.js"></script>
 <script src = "js/CanvasDrawing.js"></script>
+<style>
+div.graph {
+	float:left;
+	margin:5px;
+	border-style:solid;
+	border-width:1px;
+}
+span.input {
+	color:#008800;
+	font-weight:bold;
+}
+
+#graphTemplate{
+	display:none;
+}
+</style>
 <script>
 var dice = [];
 
@@ -128,23 +110,6 @@ var dice = [];
 			document.getElementById("theoOut"+i).value = result.prob[i];
 			document.getElementById("theoFOut"+i).value = result.probFrac[i];
 		}
-		//delete mr!
-		/*try{
-			result.probFrac1=calculateProbFrac(dice[0],[dice[1]]);
-			result.probFrac2=calculateProbFrac(dice[1],[dice[0]]);
-		}catch(err){
-			console.log(err);
-			result.probFrac1 = "Cannot calculate exact";
-			result.probFrac2 = "Cannot calculate exact";
-		}
-		result.prob1=calculateProb(dice[0],[dice[1]]);
-		result.prob2=calculateProb(dice[1],[dice[0]]);
-		document.getElementById("exOut1").value=result.simulation[0];	
-		document.getElementById("theoOut1").value=result.prob1;
-		document.getElementById("theoFOut1").value=result.probFrac1;
-		document.getElementById("exOut2").value=result.simulation[1];
-		document.getElementById("theoOut2").value=result.prob2;
-		document.getElementById("theoFOut2").value=result.probFrac2;*/
 	}
 	var drawCanvases = function(){
 		var probs = dice.map(function(die){return die.probModel;});
@@ -170,5 +135,39 @@ var dice = [];
 	
 
 </script>
+</head>
+<body>
+<div class="layer1">
+<div class="layer2">
+<div class="layer3">
+<h1>Discrete Distribution Tool</h1>
+</div>
+<p>This is used for graphically analyzing discrete distributions</p>
+<div class="layer3"><h2>How to Use</h2></div>
+<p>There are two ways to define simple distributions:  Merely typing a number such as <span class="input">3</span> represents a discrete uniform distribution where integer values from 1 to 3 are equally likely, while listing numbers in brackets can also represent a distribution, where each listed number is equally likely.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>. </p>
+<p>Operations on distributions are represented by putting the distributions in a type of brackets: <span class="input">()</span> are used for addition, <span class="input"><></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum between any of the given distributions.  For example, <span class="input">[5,5]</span> means finding the maximum of two independent discrete uniform distributions of size 5.  These operations can be combined - <span class="input"><[6,6],[6,6],4></span> is perfectly valid.</p>
+<p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[7,7,7]</span>, <span class="input">[7:3]</span> can be used. <span class="input"><[6,6],[6,6],4></span> is the same as <span class="input"><[6:2]:2,4></span>.</p>
+<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
+
+</div>
+<div class="layer2">
+
+	Distributions to Analyze<input type="text" id="input" size=99></input><br>
+	Trials to run<input type="text" id="trials"></input>
+	<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
+	<div class="layer3" id="graphTemplate">
+		<div class="graph">
+			<canvas id="canvas%" class="graph" width=600 height=300></canvas>
+			<div><input type="checkbox" id="norm%" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal%" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box%" onclick="drawCanvases()"></input>Display box plot</div>
+			<div>Experimental Probability of winning<input type="text" id="exOut%" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text"  id="theoOut%" disabled></input></div>
+			<div>Theoretical Probability of winning<input type="text" id="theoFOut%" disabled></input></div>
+		</div>
+	</div>
+	<div class="layer3" id="graphContainer"><noscript>Sorry, this webpage relies on javascript</noscript>
+	</div>
+</div>
+
+</div>
 </body>
 </html>
