@@ -16,7 +16,19 @@
 
 <style>
 div.table{
-	overflow:scroll;
+	overflow: scroll;
+}
+table{
+
+	border-collapse: collapse;
+}
+td{
+	
+	border-width:3px;
+	border-radius:3px;
+	border-style:solid;
+	border-color:#66aa55;
+	background-color:#ddffd0;
 }
 </style>
 
@@ -29,7 +41,8 @@ div.table{
 		var array = createArray(input,cols,rows);
 		var htmltable = createHTMLTable(rows,cols,array);
 		document.getElementById("table").innerHTML=htmltable;
-	}
+		colorTable();
+	};
 	var createArray = function(string,xmax,ymax){
 		var array = [];
 		for(var i = 0; i < ymax; i++){
@@ -51,33 +64,80 @@ div.table{
 			}
 		}
 		return array;
-	}
+	};
+	
 	var createHTMLTable = function(rows,cols,array){
 		var begin = "<table>";
 		var beginLine = "<tr>";
 		var beginElement = "<td>";
 		var endElement = "</td>";
+		var beginElement0 = "<th>";
+		var endElement0 = "</th>";
 		var endLine = "</tr>";
 		var end = "</table>";
 		var str = begin;
 		for(var i = 0; i < rows; i++){
 			str+=beginLine;
 			for(var j = 0; j < cols; j++){
-				str+=beginElement;
-				str+=array[i][j];
-				str+=endElement;
+				if(i==0||j==0){
+					str+=beginElement0;
+				}else{
+					str+=beginElement;
+				}
+				str+=array[i][j];	
+				if(i==0||j==0){
+					str+=endElement0;
+				}else{
+					str+=endElement;
+				}
+	
 			}
 			str+=endLine;
 		}
 		str+=end;
 		return str;
-	}
+	};
+	var colorTable = function(){
+		var elements = document.getElementsByTagName("td");
+		for(var i= 0; i < elements.length; i++){
+			var value = elements[i].innerHTML;
+			var str=valueToColor(value);
+			elements[i].style["background-color"]=str;
+		}
+	};
+	
+	var valueToColor = function(value){
+		var green0=255;
+		var green1=0;
+		var blue0=208;
+		var blue1=0;
+		var red0=221;
+		var red1=255;//interpolate these values
+		var weight = valueToWeight(value);
+		var green=Math.floor(green0*(1-weight)+green1*weight);
+		var blue =Math.floor( blue0*(1-weight)+ blue1*weight);
+		var red  =Math.floor(  red0*(1-weight)+  red1*weight);
+		return "rgb("+red+","+green+","+blue+")";
+	};
+	var valueToWeight = function(value){
+		if(value>.5){
+			return 0;
+		}
+		return value*2;
+	};
+	var intToCssString = function(integer){
+		
+		var str = "000000"+(Number(integer).toString(16));
+		st=str.toUpperCase();
+		str=str.substr(-6);
+		str="#"+str;
+	};
 </script>
 </head>
 <body>
 <div class="layer1">
 	<div class="layer2">
-		Input Expression<input type="text" id="input"></input>rows<input type="text" id="rows" value="10"></input>columns<input type="text" id="cols" value="10"></input><button onclick="makeTable()">Go!</button>
+		Input Expression<input type="text" id="input">rows<input type="text" id="rows" value="10">columns<input type="text" id="cols" value="10"><button onclick="makeTable()">Go!</button>
 	</div>
 	<div class="layer2">
 		<div class="table" id="table">

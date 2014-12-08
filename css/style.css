@@ -6,7 +6,7 @@ div.layer2, div.layer4, div.graph{
 	border-color:#66ff77;
 	background-color:#aaff9a;
 }
-div.layer1, div.layer2, div.layer3, div.layer4, div.layer5, div.graph{
+.layer1, .layer2, .layer3, .layer4, .layer5, div.graph{
 	margin:5px;
 	border-width:3px;
 	border-radius:3px;
@@ -20,9 +20,15 @@ body{
 	background-color:#aaff9a;
 	color:#004411;
 }
-h1,h2{
+h1,h2,h3{
 	margin:5px;
 }
 p{
 	margin-left:5px;
+}
+div.sideBar{
+ 	/*float:right;*/
+}
+div.mainContent{
+  /*	float:left;*/
 }

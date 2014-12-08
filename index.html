@@ -136,8 +136,8 @@ var dice = [];
 
 </script>
 </head>
-<body>
-<div class="layer1">
+  <body>
+<div class="layer1 mainContent">
 <div class="layer2">
 <div class="layer3">
 <h1>Discrete Distribution Tool</h1>
@@ -152,22 +152,28 @@ var dice = [];
 </div>
 <div class="layer2">
 
-	Distributions to Analyze<input type="text" id="input" size=99></input><br>
-	Trials to run<input type="text" id="trials"></input>
+	Distributions to Analyze<input type="text" id="input" size=99><br>
+	Trials to run<input type="text" id="trials">
 	<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
 	<div class="layer3" id="graphTemplate">
 		<div class="graph">
 			<canvas id="canvas%" class="graph" width=600 height=300></canvas>
-			<div><input type="checkbox" id="norm%" checked onclick="drawCanvases()"></input>Normalize graph<input type="checkbox" id="normal%" onclick="drawCanvases()"></input> Display bell curve<input type="checkbox" id="box%" onclick="drawCanvases()"></input>Display box plot</div>
-			<div>Experimental Probability of winning<input type="text" id="exOut%" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text"  id="theoOut%" disabled></input></div>
-			<div>Theoretical Probability of winning<input type="text" id="theoFOut%" disabled></input></div>
+			<div><input type="checkbox" id="norm%" checked onclick="drawCanvases()">Normalize graph<input type="checkbox" id="normal%" onclick="drawCanvases()"> Display bell curve<input type="checkbox" id="box%" onclick="drawCanvases()">Display box plot</div>
+			<div>Experimental Probability of winning<input type="text" id="exOut%" disabled></div>
+			<div>Theoretical Probability of winning<input type="text"  id="theoOut%" disabled></div>
+			<div>Theoretical Probability of winning<input type="text" id="theoFOut%" disabled></div>
 		</div>
 	</div>
-	<div class="layer3" id="graphContainer"><noscript>Sorry, this webpage relies on javascript</noscript>
 	</div>
 </div>
-
+<div class="layer1 sideBar">
+  <div class="layer2">
+	<h3>Other webpages:</h3>
+  </div>
+  <div class="layer2">
+	<a href="demo.html">CLT Demonstration</a><br>
+	<a href="testing.html">Tables</a>
+  </div>
 </div>
 </body>
 </html>
