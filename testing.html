@@ -1,17 +1,17 @@
 <html>
-<head>
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<script src = "js/ProbabilityModel.js"></script>
-<script src = "js/Die.js"></script>
-<script src = "js/SimpleDie.js"></script>
-<script src = "js/ComplexDie.js"></script>
-<script src = "js/MultiDie.js"></script>
-<script src = "js/Main.js"></script>
-<script src = "js/Fraction.js"></script>
-<script src = "js/CanvasDrawing.js"></script>
+  <head>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src = "js/ProbabilityModel.js"></script>
+	<script src = "js/Die.js"></script>
+	<script src = "js/SimpleDie.js"></script>
+	<script src = "js/ComplexDie.js"></script>
+	<script src = "js/MultiDie.js"></script>
+	<script src = "js/Main.js"></script>
+	<script src = "js/Fraction.js"></script>
+	<script src = "js/CanvasDrawing.js"></script>
 
 
-<title>Distribution Testing</title>
+	<title>Distribution Testing</title>
 
 
 <style>
@@ -34,118 +34,135 @@ td{
 
 
 <script>
-	var makeTable = function(){
-		var input = document.getElementById("input").value;
-		var rows = Number(document.getElementById("rows").value)+1;
-		var cols = Number(document.getElementById("cols").value)+1;
-		var array = createArray(input,cols,rows);
-		var htmltable = createHTMLTable(rows,cols,array);
-		document.getElementById("table").innerHTML=htmltable;
-		colorTable();
-	};
-	var createArray = function(string,xmax,ymax){
-		var array = [];
-		for(var i = 0; i < ymax; i++){
-			array[i]=[];
+var makeTable = function() {
+	var input = document.getElementById("input").value;
+	var rows = Number(document.getElementById("rows").value) + 1;
+	var cols = Number(document.getElementById("cols").value) + 1;
+	var array = createArray(input, cols, rows);
+	var htmltable = createHTMLTable(rows, cols, array);
+	document.getElementById("table").innerHTML = htmltable;
+	colorTable();
+};
+var createArray = function(string, xmax, ymax) {
+	var array = [];
+	for (var i = 0; i < ymax; i++)
+	{
+		array[i] = [];
+	}
+	array[0][0] = "";
+	for (var i = 1; i < ymax; i++)
+	{
+		array[i][0] = "y=" + i;
+	}	
+	for (var i = 1; i < xmax; i++)
+	{
+		array[0][i] = "x=" + i;
+	}
+	for (var i = 1; i < ymax; i++)
+	{
+		for (var j = 1; j < xmax; j++)
+		{
+			var newString = "x=" + j + ";y=" + i + ";" + string;
+			var dice = parse(newString).map(createDie);
+			var sdie = new SubtractDie(dice);
+			try
+			{
+				array[i][j] = formatNumber((1 - sdie.cdf(0)));}catch(e){alert(e);}
 		}
-		array[0][0]="";
-		for(var i = 1; i < ymax; i++){
-			array[i][0]="y="+i;
-		}	
-		for(var i = 1; i < xmax; i++){
-			array[0][i]="x="+i;
-		}
-		for(var i = 1; i < ymax; i++){
-			for(var j = 1; j < xmax; j++){
-				var newString = "x="+j+";y="+i+";"+string;
-				var dice = parse(newString).map(createDie);
-				var sdie = new SubtractDie(dice);
-				array[i][j]=(1-sdie.cdf(0)).toPrecision(3);
+	}
+	return array;
+};
+
+var createHTMLTable = function(rows, cols, array) {
+	var begin = "<table>";
+	var beginLine = "<tr>";
+	var beginElement = "<td>";
+	var endElement = "</td>";
+	var beginElement0 = "<th>";
+	var endElement0 = "</th>";
+	var endLine = "</tr>";
+	var end = "</table>";
+	var str = begin;
+	for (var i = 0; i < rows; i++)
+	{
+		str += beginLine;
+		for (var j = 0; j < cols; j++)
+		{
+			if (i == 0 || j == 0)
+			{
+				str += beginElement0;
 			}
-		}
-		return array;
-	};
-	
-	var createHTMLTable = function(rows,cols,array){
-		var begin = "<table>";
-		var beginLine = "<tr>";
-		var beginElement = "<td>";
-		var endElement = "</td>";
-		var beginElement0 = "<th>";
-		var endElement0 = "</th>";
-		var endLine = "</tr>";
-		var end = "</table>";
-		var str = begin;
-		for(var i = 0; i < rows; i++){
-			str+=beginLine;
-			for(var j = 0; j < cols; j++){
-				if(i==0||j==0){
-					str+=beginElement0;
-				}else{
-					str+=beginElement;
-				}
-				str+=array[i][j];	
-				if(i==0||j==0){
-					str+=endElement0;
-				}else{
-					str+=endElement;
-				}
-	
+			else
+			{
+				str += beginElement;
 			}
-			str+=endLine;
+			str += array[i][j];	
+			if (i == 0 || j == 0)
+			{
+				str += endElement0;
+			}
+			else
+			{
+				str += endElement;
+			}
+
 		}
-		str+=end;
-		return str;
-	};
-	var colorTable = function(){
-		var elements = document.getElementsByTagName("td");
-		for(var i= 0; i < elements.length; i++){
-			var value = elements[i].innerHTML;
-			var str=valueToColor(value);
-			elements[i].style["background-color"]=str;
-		}
-	};
-	
-	var valueToColor = function(value){
-		var green0=255;
-		var green1=0;
-		var blue0=208;
-		var blue1=0;
-		var red0=221;
-		var red1=255;//interpolate these values
-		var weight = valueToWeight(value);
-		var green=Math.floor(green0*(1-weight)+green1*weight);
-		var blue =Math.floor( blue0*(1-weight)+ blue1*weight);
-		var red  =Math.floor(  red0*(1-weight)+  red1*weight);
-		return "rgb("+red+","+green+","+blue+")";
-	};
-	var valueToWeight = function(value){
-		if(value>.5){
-			return 0;
-		}
-		return value*2;
-	};
-	var intToCssString = function(integer){
-		
-		var str = "000000"+(Number(integer).toString(16));
-		st=str.toUpperCase();
-		str=str.substr(-6);
-		str="#"+str;
-	};
+		str += endLine;
+	}
+	str += end;
+	return str;
+};
+var colorTable = function() {
+	var elements = document.getElementsByTagName("td");
+	for (var i= 0; i < elements.length; i++)
+	{
+		var value = elements[i].innerHTML;
+		var str=valueToColor(value);
+		elements[i].style["background-color"] = str;
+	}
+};
+var formatNumber = function(number) {
+	if (number < 0.001)
+	{
+		return "0.000";
+	}
+	var str = number.toString() + "000";
+	return str.substr(0, 5);
+}
+var valueToColor = function(value) {
+	var green0=255;
+	var green1=0;
+	var blue0=208;
+	var blue1=0;
+	var red0=221;
+	var red1=255;//interpolate these values
+	var weight = valueToWeight(value);
+	var green=Math.floor(green0 * (1 - weight) + green1 * weight);
+	var blue =Math.floor(blue0 * (1 - weight) + blue1 * weight);
+	var red  =Math.floor(red0 * (1 - weight) +  red1 * weight);
+	return "rgb(" + red + "," + green + "," + blue + ")";
+};
+var valueToWeight = function(value) {
+	if (value > .5)
+	{
+		return 0;
+	}
+	return Math.pow(value * 2, 2);
+};
 </script>
-</head>
-<body>
-<div class="layer1">
-	<div class="layer2">
+  </head>
+  <body>
+	<div class="layer1">
+	  <div class="layer2">
 		Input Expression<input type="text" id="input">rows<input type="text" id="rows" value="10">columns<input type="text" id="cols" value="10"><button onclick="makeTable()">Go!</button>
-	</div>
-	<div class="layer2">
+	  </div>
+	  <div class="layer2">
 		<div class="table" id="table">
 		</div>
+	  </div>
+
 	</div>
-	
-</div>
 
 
-</body>
+  </body>
 </html>

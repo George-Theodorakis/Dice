@@ -1,15 +1,15 @@
 <html>
-<head>
-<title>Probability Simulation</title>
-<link rel="stylesheet" type="text/css" href="css/style.css">
-<script src = "js/ProbabilityModel.js"></script>
-<script src = "js/Die.js"></script>
-<script src = "js/SimpleDie.js"></script>
-<script src = "js/ComplexDie.js"></script>
-<script src = "js/MultiDie.js"></script>
-<script src = "js/Main.js"></script>
-<script src = "js/Fraction.js"></script>
-<script src = "js/CanvasDrawing.js"></script>
+  <head>
+	<title>Probability Simulation</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src = "js/ProbabilityModel.js"></script>
+	<script src = "js/Die.js"></script>
+	<script src = "js/SimpleDie.js"></script>
+	<script src = "js/ComplexDie.js"></script>
+	<script src = "js/MultiDie.js"></script>
+	<script src = "js/Main.js"></script>
+	<script src = "js/Fraction.js"></script>
+	<script src = "js/CanvasDrawing.js"></script>
 <style>
 div.graph {
 	float:left;
@@ -29,151 +29,175 @@ span.input {
 <script>
 var dice = [];
 
-	var updateDice = function(){//this function does too much, it also updates DOM
-		var input = document.getElementById("input");
-		dice = parse(input.value).map(createDie);
-		var graphContainer = document.getElementById("graphContainer");
-		graphContainer.innerHTML = "";
-		var graphTemplate = document.getElementById("graphTemplate");
-		var graphHtml = graphTemplate.innerHTML;
-		for(var i = 0; i < dice.length; i++){
-			graphContainer.innerHTML = graphContainer.innerHTML + graphHtml.replace(/\%/g,i);
-		}
-		graphContainer.innerHTML+='<div class="placeHolder"></div>';
+var updateDice = function() {//this function does too much, it also updates DOM
+	var input = document.getElementById("input");
+	dice = parse(input.value).map(createDie);
+	var graphContainer = document.getElementById("graphContainer");
+	graphContainer.innerHTML = "";
+	var graphTemplate = document.getElementById("graphTemplate");
+	var graphHtml = graphTemplate.innerHTML;
+	for (var i = 0; i < dice.length; i++)
+	{
+		graphContainer.innerHTML = graphContainer.innerHTML + graphHtml.replace(/\%/g, i);
 	}
-	var calculateProb = function(firstDie,secondDice){
-		if(secondDice.length==0)return 1;
-		return 1-new SubtractDie([firstDie,new MaxDie(secondDice)]).cdf(0);
+	graphContainer.innerHTML += '<div class="placeHolder"></div>';
+}
+var calculateProb = function(firstDie, secondDice) {
+	if (secondDice.length == 0)return 1;
+	return 1 - new SubtractDie([firstDie,new MaxDie(secondDice)]).cdf(0);
+}
+var calculateProbFrac = function(firstDie, secondDice) {
+	if (secondDice.length == 0)return new Fraction(1, 1);
+	return new Fraction(1, 1).subtract(new SubtractDie([firstDie,new MaxDie(secondDice)]).cdfFrac(0));
+}
+
+var runSimulation = function(dice, trials) {
+	var wins=[];
+	for (var i = 0; i  < dice.length; i++)
+	{
+		wins[i] = 0;
 	}
-	var calculateProbFrac = function(firstDie,secondDice){
-		if(secondDice.length==0)return new Fraction(1,1);
-		return new Fraction(1,1).subtract(new SubtractDie([firstDie,new MaxDie(secondDice)]).cdfFrac(0));
-	}
-	
-	var runSimulation = function(dice,trials){
-		var wins=[];
-		for(var i = 0; i  < dice.length; i++){
-			wins[i]=0;
-		}
-		
-		for (var i = 0; i < trials; i++)
+
+	for (var i = 0; i < trials; i++)
+	{
+		var max=dice[0].roll();
+		var maxIndex=0;
+		var tie=false;
+		for (var j = 1; j < dice.length; j++)
 		{
-			var max=dice[0].roll();
-			var maxIndex=0;
-			var tie=false;
-			for(var j = 1; j < dice.length; j++){
-				var roll = dice[j].roll();
-				if(roll>max){
-					max=roll;
-					maxIndex=j;
-					tie=false;
-				}else if(roll==max){
-					tie=true;
-				}
+			var roll = dice[j].roll();
+			if (roll > max)
+			{
+				max = roll;
+				maxIndex = j;
+				tie = false;
 			}
-			if(!tie){
-				wins[maxIndex]++;
+			else if (roll == max)
+			{
+				tie = true;
 			}
 		}
-		for(var i = 0; i < dice.length; i++){
-			wins[i]=wins[i]/trials;
-		}
-		return wins;
-		
-	
-	}
-	var analyze = function(){
-	
-		var trials = document.getElementById("trials").value;
-	  	var result = {};
-	  	updateDice();
-	  	drawCanvases();
- 	 	var start = new Date().getTime();			
- 	  	result.simulation=runSimulation(dice,trials);
-	  	var end = new Date().getTime();
-		result.prob=[];
-		result.probFrac=[];
-		for(var i = 0; i < dice.length; i++){
-			result.prob.push(calculateProb(dice[i],dice.filter(function(val,index){return index!=i;})));
-		}
-		try{
-			for(var i = 0; i < dice.length; i++){
-				result.probFrac.push(calculateProbFrac(dice[i],dice.filter(function(val,index){return index!=i;})));
-			}
-		}catch(e){
-			for(var i = 0; i < dice.length; i++){
-				result.probFrac.push("Cannot calculate exact");
-			}
-		}
-		for(var i = 0; i < dice.length; i++){
-			document.getElementById("exOut"+i).value = result.simulation[i];
-			document.getElementById("theoOut"+i).value = result.prob[i];
-			document.getElementById("theoFOut"+i).value = result.probFrac[i];
+		if (!tie)
+		{
+			wins[maxIndex]++;
 		}
 	}
-	var drawCanvases = function(){
-		var probs = dice.map(function(die){return die.probModel;});
-		var flags = [];
-		for(var i = 0; i < dice.length; i++){
-			flags.push({histogram:true, box:document.getElementById("box"+i).checked,normal:document.getElementById("normal"+i).checked,normalize:document.getElementById("norm"+i).checked});
+	for (var i = 0; i < dice.length; i++)
+	{
+		wins[i] = wins[i] / trials;
+	}
+	return wins;
+
+
+}
+var analyze = function() {
+
+	var trials = document.getElementById("trials").value;
+	var result = {};
+	updateDice();
+	drawCanvases();
+	var start = new Date().getTime();			
+	result.simulation = runSimulation(dice, trials);
+	var end = new Date().getTime();
+	result.prob = [];
+	result.probFrac = [];
+	for (var i = 0; i < dice.length; i++)
+	{
+		result.prob.push(calculateProb(dice[i], dice.filter(function(val, index) {return index != i;})));
+	}
+	try
+	{
+		for (var i = 0; i < dice.length; i++)
+		{
+			result.probFrac.push(calculateProbFrac(dice[i], dice.filter(function(val, index) {return index != i;})));
 		}
-		var normProbs = [];
-		for(var i = 0; i < dice.length; i++){
-			if(flags[i].normalize){
-				normProbs.push(probs[i]);
-			}
-		}
-		var normWindow = calculateWindow(normProbs);
-		for(var i = 0; i < dice.length; i++){
-			if(flags[i].normalize){
-				drawCanvas(document.getElementById("canvas" + i),probs[i],normWindow,flags[i]);
-			}else{
-				drawCanvas(document.getElementById("canvas" + i),probs[i],calculateWindow([probs[i]]),flags[i]);
-			}
+	}catch(e){
+		for (var i = 0; i < dice.length; i++)
+		{
+			result.probFrac.push("Cannot calculate exact");
 		}
 	}
-	
+	for (var i = 0; i < dice.length; i++)
+	{
+		document.getElementById("exOut" + i).value = result.simulation[i];
+		document.getElementById("theoOut" + i).value = result.prob[i];
+		document.getElementById("theoFOut" + i).value = result.probFrac[i];
+	}
+}
+var drawCanvases = function() {
+	var probs = dice.map(function(die) {return die.probModel;});
+	var flags = [];
+	for (var i = 0; i < dice.length; i++)
+	{
+		flags.push({histogram:true, box:document.getElementById("box" + i).checked,normal:document.getElementById("normal" + i).checked,normalize:document.getElementById("norm" + i).checked});
+	}
+	var normProbs = [];
+	for (var i = 0; i < dice.length; i++)
+	{
+		if (flags[i].normalize)
+		{
+			normProbs.push(probs[i]);
+		}
+	}
+	var normWindow = calculateWindow(normProbs);
+	for (var i = 0; i < dice.length; i++)
+	{
+		if (flags[i].normalize)
+		{
+			drawCanvas(document.getElementById("canvas" + i), probs[i], normWindow, flags[i]);
+		}
+		else
+		{
+			drawCanvas(document.getElementById("canvas" + i), probs[i], calculateWindow([probs[i]]), flags[i]);
+		}
+	}
+}
+
 
 </script>
-</head>
+  </head>
   <body>
-<div class="layer1 mainContent">
-<div class="layer2">
-<div class="layer3">
-<h1>Discrete Distribution Tool</h1>
-</div>
-<p>This is used for graphically analyzing discrete distributions</p>
-<div class="layer3"><h2>How to Use</h2></div>
-<p>There are two ways to define simple distributions:  Merely typing a number such as <span class="input">3</span> represents a discrete uniform distribution where integer values from 1 to 3 are equally likely, while listing numbers in brackets can also represent a distribution, where each listed number is equally likely.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>. </p>
-<p>Operations on distributions are represented by putting the distributions in a type of brackets: <span class="input">()</span> are used for addition, <span class="input"><></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum between any of the given distributions.  For example, <span class="input">[5,5]</span> means finding the maximum of two independent discrete uniform distributions of size 5.  These operations can be combined - <span class="input"><[6,6],[6,6],4></span> is perfectly valid.</p>
-<p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[7,7,7]</span>, <span class="input">[7:3]</span> can be used. <span class="input"><[6,6],[6,6],4></span> is the same as <span class="input"><[6:2]:2,4></span>.</p>
-<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
+	<div class="layer1 mainContent">
+	  <div class="layer2">
+		<div class="layer3">
+		  <h1>Discrete Distribution Tool</h1>
+		</div>
+		<p>This is used for graphically analyzing discrete distributions</p>
+		<div class="layer3"><h2>How to Use</h2></div>
+		<p>There are two ways to define simple distributions:  Merely typing a number such as <span class="input">3</span> represents a discrete uniform distribution where integer values from 1 to 3 are equally likely, while listing numbers in brackets can also represent a distribution, where each listed number is equally likely.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>. </p>
+		<p>Operations on distributions are represented by putting the distributions in a type of brackets: <span class="input">()</span> are used for addition, <span class="input">&#x3C;></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum between any of the given distributions.  For example, <span class="input">[5,5]</span> means finding the maximum of two independent discrete uniform distributions of size 5.  These operations can be combined - <span class="input">&#x3C;[6,6],[6,6],4></span> is perfectly valid.</p>
+		<p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[7,7,7]</span>, <span class="input">[7:3]</span> can be used. <span class="input">&#x3C;[6,6],[6,6],4></span> is the same as <span class="input">&#x3C;[6:2]:2,4></span>.</p>
+		<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
 
-</div>
-<div class="layer2">
+	  </div>
+	  <div class="layer2">
 
-	Distributions to Analyze<input type="text" id="input" size=99><br>
-	Trials to run<input type="text" id="trials">
-	<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
-	<div class="layer3" id="graphTemplate">
-		<div class="graph">
+		Distributions to Analyze<input type="text" id="input" size=99><br>
+		Trials to run<input type="text" id="trials">
+		<p><Button type="button" id="button" onclick="analyze()">Go!</Button></p>
+		<div class="layer3" id="graphTemplate">
+		  <div class="graph">
 			<canvas id="canvas%" class="graph" width=600 height=300></canvas>
 			<div><input type="checkbox" id="norm%" checked onclick="drawCanvases()">Normalize graph<input type="checkbox" id="normal%" onclick="drawCanvases()"> Display bell curve<input type="checkbox" id="box%" onclick="drawCanvases()">Display box plot</div>
 			<div>Experimental Probability of winning<input type="text" id="exOut%" disabled></div>
 			<div>Theoretical Probability of winning<input type="text"  id="theoOut%" disabled></div>
 			<div>Theoretical Probability of winning<input type="text" id="theoFOut%" disabled></div>
+		  </div>
 		</div>
+
+		<div id="graphContainer" class="layer3">
+
+		</div>
+	  </div>
 	</div>
+	<div class="layer1 sideBar">
+	  <div class="layer2">
+		<h3>Other webpages:</h3>
+	  </div>
+	  <div class="layer2">
+		<a href="demo.html">CLT Demonstration</a><br>
+		<a href="testing.html">Tables</a>
+	  </div>
 	</div>
-</div>
-<div class="layer1 sideBar">
-  <div class="layer2">
-	<h3>Other webpages:</h3>
-  </div>
-  <div class="layer2">
-	<a href="demo.html">CLT Demonstration</a><br>
-	<a href="testing.html">Tables</a>
-  </div>
-</div>
-</body>
+  </body>
 </html>
