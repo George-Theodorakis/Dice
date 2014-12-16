@@ -1,17 +1,9 @@
 
-	var showDice = function(index){
-		updateDice();
-		alert(dice[index]);
-	}
-	var rollDice = function(index){
-		updateDice();
-		alert(dice[index].roll());
-	}
 	var randInt = function(max) {//[0..max)
   		return Math.floor(Math.random() * max);
 	}
-	var strsDice = ["add","multiply","max"];
- 	var constrsDice = [AddDie,MultiplyDie,MaxDie];
+	var strsDice = ["add","multiply","max","subtract"];
+ 	var constrsDice = [AddDie,MultiplyDie,MaxDie,SubtractDie];
  	var createDie = function(input){
  		if(input instanceof Array){
  			if(strsDice.indexOf(input[0])>-1){
@@ -21,14 +13,8 @@
  		}else{
  			return new SimpleDie(input);
  		}
- 	}
+ 	};
 	
-	var gcd = function(a, b) { //this function shamelessly copied from internet
-	 	 if ( ! b) { 
-	 	 	return a; 
-	 	 }
-	 	 return gcd(b, a % b); 
-	}
 	var isValid = function(string){//isNaN accepts "" " " and null, these are not numbers - note that for most cases this function is !isNaN
 		if(isNaN(string)){
 			return false;

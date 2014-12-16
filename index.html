@@ -7,7 +7,7 @@
 	<script src = "js/SimpleDie.js"></script>
 	<script src = "js/ComplexDie.js"></script>
 	<script src = "js/MultiDie.js"></script>
-	<script src = "js/Main.js"></script>
+	<script src = "js/Misc.js"></script>
 	<script src = "js/Fraction.js"></script>
 	<script src = "js/CanvasDrawing.js"></script>
 <style>
@@ -123,7 +123,7 @@ var analyze = function() {
 		document.getElementById("theoOut" + i).value = result.prob[i];
 		document.getElementById("theoFOut" + i).value = result.probFrac[i];
 	}
-}
+};
 var drawCanvases = function() {
 	var probs = dice.map(function(die) {return die.probModel;});
 	var flags = [];
@@ -151,7 +151,7 @@ var drawCanvases = function() {
 			drawCanvas(document.getElementById("canvas" + i), probs[i], calculateWindow([probs[i]]), flags[i]);
 		}
 	}
-}
+};
 
 
 </script>
@@ -167,7 +167,8 @@ var drawCanvases = function() {
 		<p>There are two ways to define simple distributions:  Merely typing a number such as <span class="input">3</span> represents a discrete uniform distribution where integer values from 1 to 3 are equally likely, while listing numbers in brackets can also represent a distribution, where each listed number is equally likely.  For example, <span class="input">{1,2,3,4,5,6}</span> is functionally identical to <span class="input">6</span>. </p>
 		<p>Operations on distributions are represented by putting the distributions in a type of brackets: <span class="input">()</span> are used for addition, <span class="input">&#x3C;></span> are used for multiplication, and <span class="input">[]</span> are used for finding the maximum between any of the given distributions.  For example, <span class="input">[5,5]</span> means finding the maximum of two independent discrete uniform distributions of size 5.  These operations can be combined - <span class="input">&#x3C;[6,6],[6,6],4></span> is perfectly valid.</p>
 		<p>Additionally, colons can be used to represent multiple copies - instead of writing <span class="input">[7,7,7]</span>, <span class="input">[7:3]</span> can be used. <span class="input">&#x3C;[6,6],[6,6],4></span> is the same as <span class="input">&#x3C;[6:2]:2,4></span>.</p>
-		<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  The approximate number of simulations per second is provided for the given settings after each run, but these may be inaccurate with small amounts of trials.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
+		<p>Variables may be defined and used later: <span class="input">x=7;y=5;[x:y]</span> is the same as <span class="input">[7:5]</span>.  Using variables can be useful when different distributions depend on the same factors.
+		<p>Warning: Setting the number of trials or combinations of dice too high may cause your browser to freeze - be wary when increasing the trial number or total number of dice simulated.  Note that with a large amount of dice, the time taken to calculate the probability may be large.  This should be addressed in a future version.</p>
 
 	  </div>
 	  <div class="layer2">

@@ -6,7 +6,7 @@
 	<script src = "js/SimpleDie.js"></script>
 	<script src = "js/ComplexDie.js"></script>
 	<script src = "js/MultiDie.js"></script>
-	<script src = "js/Main.js"></script>
+	<script src = "js/Misc.js"></script>
 	<script src = "js/Fraction.js"></script>
 	<script src = "js/CanvasDrawing.js"></script>
 
@@ -14,36 +14,20 @@
 	<title>Distribution Testing</title>
 
 
-<style>
-div.table{
-	overflow: scroll;
-}
-table{
-
-	border-collapse: collapse;
-}
-td{
-	
-	border-width:3px;
-	border-radius:3px;
-	border-style:solid;
-	border-color:#66aa55;
-	background-color:#ddffd0;
-}
-</style>
-
-
 <script>
-var makeTable = function() {
+var makeTable = function(func) {
 	var input = document.getElementById("input").value;
 	var rows = Number(document.getElementById("rows").value) + 1;
 	var cols = Number(document.getElementById("cols").value) + 1;
-	var array = createArray(input, cols, rows);
+	var array = createArray(input, cols, rows,func);
 	var htmltable = createHTMLTable(rows, cols, array);
 	document.getElementById("table").innerHTML = htmltable;
 	colorTable();
 };
-var createArray = function(string, xmax, ymax) {
+var makeTable2 = function(){
+	makeTable(dieFunc);
+}
+var createArray = function(string, xmax, ymax,func) {
 	var array = [];
 	for (var i = 0; i < ymax; i++)
 	{
@@ -61,16 +45,18 @@ var createArray = function(string, xmax, ymax) {
 	for (var i = 1; i < ymax; i++)
 	{
 		for (var j = 1; j < xmax; j++)
-		{
-			var newString = "x=" + j + ";y=" + i + ";" + string;
-			var dice = parse(newString).map(createDie);
-			var sdie = new SubtractDie(dice);
-			try
-			{
-				array[i][j] = formatNumber((1 - sdie.cdf(0)));}catch(e){alert(e);}
+		{	
+			array[i][j]=func(i,j);
 		}
 	}
 	return array;
+};
+var dieFunc = function(i,j){
+		var string=document.getElementById("input").value;
+			var newString = "x=" + j + ";y=" + i + ";" + string;
+			var dice = parse(newString).map(createDie);
+			var sdie = new SubtractDie(dice);
+			return formatNumber((1 - sdie.cdf(0)));
 };
 
 var createHTMLTable = function(rows, cols, array) {
@@ -142,25 +128,57 @@ var valueToColor = function(value) {
 	var red  =Math.floor(red0 * (1 - weight) +  red1 * weight);
 	return "rgb(" + red + "," + green + "," + blue + ")";
 };
+var threshold=.5;
 var valueToWeight = function(value) {
-	if (value > .5)
+	if (value > threshold)
 	{
 		return 0;
 	}
-	return Math.pow(value * 2, 2);
+	return Math.pow(value / threshold, 2);
+};
+window.onload = function(){
+	makeTable(function(){return "";});
 };
 </script>
+<style>
+div.table{
+	overflow: scroll;
+}
+table{
+
+	border-collapse: collapse;
+}
+td{
+	
+	border-width:3px;
+	border-radius:3px;
+	border-style:solid;
+	border-color:#66aa55;
+	background-color:#ddffd0;
+	width:50px;
+	height:50px;
+	text-align:center;
+}
+</style>
+
+	
   </head>
   <body>
-	<div class="layer1">
+	<div class="layer1 thingy">
 	  <div class="layer2">
-		Input Expression<input type="text" id="input">rows<input type="text" id="rows" value="10">columns<input type="text" id="cols" value="10"><button onclick="makeTable()">Go!</button>
+		<h1>Table of Probabilities</h1>
 	  </div>
 	  <div class="layer2">
-		<div class="table" id="table">
-		</div>
+		This compares the two distributions entered into the text box for varying values of x and y.  The probability of the first distribution being higher than the second is given.
 	  </div>
-
+	  <div class="layer2">
+		Input Expression<input type="text" id="input" value="[6:x],[6:y]">rows<input type="text" id="rows" value="10">columns<input type="text" id="cols" value="10"><button onclick="makeTable(dieFunc)">Go!</button>
+	  </div>
+	  
+	  <div class="layer2 table">
+		<div id="table"></div>
+	  </div>
+	  <div class="placeHolder"></div>
 	</div>
 
 
