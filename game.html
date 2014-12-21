@@ -10,19 +10,80 @@
 	<script src = "js/Fraction.js"></script>
 	<script src = "js/CanvasDrawing.js"></script>
 	<title>Game thing</title>
-<style></style>
+<style>
+input.number{
+		max-width:50px;
+		min-width:50px;
+}
+@-webkit-keyframes colorAnim {
+    from {background: green;}
+    to {background: white;}
+}
+.anim{
+	animation:colorAnim .2s;
+	-webkit-animation:colorAnim .2s;
+}
+@keyframes colorAnim {
+    from {background: green;}
+    to {background: white;}
+}
+
+</style>
 <script>
+createProbModel=false;//global for dice
+var dieCache = {};//just in case somebody wants to do multiple trials of an expensive die
+var key1 = function(event){
+	if(event.keyCode==13){
+		roll1();
+		return false;
+	}
+	return true;
+}
+var key2 = function(event){
+	if(event.keyCode==13){
+		roll2();
+		return false;
+	}
+	return true;
+}
   var roll1 = function(){
   	var type=document.getElementById("type1").value;
 	var quantity=document.getElementById("quantity1").value;
-	var die = createDie(parse("("+type+":"+quantity+")")[0]);
-	document.getElementById("out1").value=die.roll();
+	var str = "("+type+":"+quantity+")"
+	var die;
+	if(dieCache[str]){
+		die=dieCache[str];
+	}else{
+		die= createDie(parse(str)[0]);
+	}
+	var verboseRoll = die.verboseRoll();
+	var resultString = verboseRoll.string;
+	if(resultString.indexOf("(")==0){
+		resultString=resultString.substr(1);
+		resultString=resultString.substr(0,resultString.length-1);
+	}
+	if(quantity==1){
+		resultString=verbose.number;
+	}
+	document.getElementById("out1").innerHTML=(verboseRoll.number+"="+resultString);
+	
+	//reapply css animation - the middle line is necessary, even though it appears to do nothing
+	document.getElementById("out1").className="";
+	document.getElementById("out1").offsetWidth=document.getElementById("out1").offsetWidth;
+	document.getElementById("out1").className="anim";
   }
   var roll2 = function(){
   	var offence = document.getElementById("offence").value;
 	var defence = document.getElementById("defence").value;
-	var die = createDie(parse("{subtract,({0,1}:"+offence+"),({0,0,1}:"+defence+")}")[0]);
-	document.getElementById("out2").value=die.roll();
+	//could use SubtractDie, but want to display semantics
+	var str = "({0,1}:"+offence+"),({0,0,1}:"+defence+")";
+	var dice = parse(str).map(createDie);
+	var result = dice.map(function(die){return die.roll()});
+	document.getElementById("out2").innerHTML=result[0]+" Skulls - "+result[1] + " Shields = "+(result[0]-result[1]);
+	//reapply css animation - the middle line is necessary, even though it appears to do nothing
+	document.getElementById("out2").className="";
+	document.getElementById("out2").offsetWidth=document.getElementById("out2").offsetWidth;
+	document.getElementById("out2").className="anim";
   }
 </script>
   </head>
@@ -31,11 +92,11 @@
 	  <div class="layer2"><h1>Game thing</h1></div>
 	  <div class="layer2">
 		<div class="layer3">Dice thing</div>
-		<div class="layer3"><input type="text" id="quantity1">d<input type="text" id="type1"><button onclick="roll1()">Roll!</button><input id="out1"type="text" disabled="true"></div>
+		<div class="layer3"><input onkeyup = key1(event) class="number" type="text" id="quantity1">d<input onkeyup = key1(event) class="number" type="text" id="type1"> <button onclick="roll1()">Roll!</button> <span id="out1"></span></div>
 	  </div>
 	  <div class="layer2">
 		<div class="layer3">Heroscape Dice thing</div>
-		<div class="layer3">Offence Dice<input type="text" id="offence">Defence Dice<input type="text" id="defence"><button onclick="roll2()">Roll!</button><input id="out2" type="text" disabled="true"></div>
+		<div class="layer3">Offence Dice<input onkeyup = key2(event) type="text" class="number" id="offence"> Defence Dice<input onkeyup = key2(event) class="number" type="text" id="defence"> <button onclick="roll2()">Roll!</button>  <span id="out2"></span></div>
 	  </div>
 	</div>
   </body>

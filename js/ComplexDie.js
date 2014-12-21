@@ -5,8 +5,10 @@ function ComplexDie(sideValues){
 		this.probModel = new ProbabilityModel();
 		this.sideValues=sideValues.sort(function(a,b){return (Number(a)>Number(b))?1:((a==b)?0:-1);});//numerical sort
 		this.sides=sideValues.length;
-		for(var i =0; i < this.sides; i++){
-			this.probModel.add(this.sideValues[i],1);
+		if(createProbModel){
+			for(var i =0; i < this.sides; i++){
+				this.probModel.add(this.sideValues[i],1);
+			}
 		}
 	}
 	ComplexDie.prototype=new Die();
@@ -38,6 +40,10 @@ function ComplexDie(sideValues){
 	ComplexDie.prototype.roll = function(){
 		return this.sideValues[randInt(this.sides)];
 	};
+	ComplexDie.prototype.verboseRoll = function(){
+		var result = this.sideValues[randInt(this.sides)];
+		return {string:result,number:result};
+	}
 	ComplexDie.prototype.toString = function(){
 		return "Die with " + this.sides + " sides of " + this.sideValues;
 	};

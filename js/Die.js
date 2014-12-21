@@ -7,3 +7,4 @@ function Die(){}//for prototype/inheritance or whatever
 	Die.prototype.pdfFrac = function(value){
 		return this.cdfFrac(value).subtract(this.cdfFrac(value-1));
 	}
+var createProbModel = true;//global for other application use
