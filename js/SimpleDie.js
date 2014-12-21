@@ -1,4 +1,6 @@
-function SimpleDie(sides){//simple die has sides 1..n - n is argument to constructor
+//SimpleDie is subclass of Die, represents uniform discrete distribution
+//simple die has sides 1..n - n is argument to constructor
+function SimpleDie(sides){	
 		this.sides=sides;
 		var arr = [];
 		this.probModel = new ProbabilityModel({});

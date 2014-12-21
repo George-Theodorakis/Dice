@@ -1,7 +1,14 @@
+//contains miscellaneous functions for use in this project
 
 	var randInt = function(max) {//[0..max)
   		return Math.floor(Math.random() * max);
 	}
+	
+	
+	
+	//createDie is used to turn input given by parse() into a Die
+	//note that parse returns an array, the resultant should be unboxed
+	//before being used in createDie
 	var strsDice = ["add","multiply","max","subtract"];
  	var constrsDice = [AddDie,MultiplyDie,MaxDie,SubtractDie];
  	var createDie = function(input){
@@ -14,8 +21,9 @@
  			return new SimpleDie(input);
  		}
  	};
-	
-	var isValid = function(string){//isNaN accepts "" " " and null, these are not numbers - note that for most cases this function is !isNaN
+	//function for determining if a given input is a valid number
+	//isNaN accepts "" " " and null, these are not numbers - note that for most cases this function is !isNaN	
+	var isValid = function(string){
 		if(isNaN(string)){
 			return false;
 		}
@@ -24,9 +32,20 @@
 		}
 		return true;
 	}
-	var formatNumber = function(x) { //also shamelessly copied from the internet
+	//formats numbers like 12345678 into 12,345,678
+	//does not work with decimals
+	var formatNumber = function(x) { // shamelessly copied from the internet
 	 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); 
 	}	
+	
+	
+	
+	
+	
+	//parse turns input like <(2,{3,4:3}):2> into an array structured as
+	//[multiply,[add,2,[3,4,4,4]],[add,2,[3,4,4,4]]]
+	//the returned array is used in createDie
+	
 	var openBracket = "{",closeBracket = "}";//nevermind, don't change these
 	var replacements = [["(","{add,"],["<","{multiply,"],["[","{max,"],[")","}"],[">","}"],["]","}"]];
 	

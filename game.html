@@ -1,0 +1,42 @@
+<html>
+  <head>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src = "js/ProbabilityModel.js"></script>
+	<script src = "js/Die.js"></script>
+	<script src = "js/SimpleDie.js"></script>
+	<script src = "js/ComplexDie.js"></script>
+	<script src = "js/MultiDie.js"></script>
+	<script src = "js/Misc.js"></script>
+	<script src = "js/Fraction.js"></script>
+	<script src = "js/CanvasDrawing.js"></script>
+	<title>Game thing</title>
+<style></style>
+<script>
+  var roll1 = function(){
+  	var type=document.getElementById("type1").value;
+	var quantity=document.getElementById("quantity1").value;
+	var die = createDie(parse("("+type+":"+quantity+")")[0]);
+	document.getElementById("out1").value=die.roll();
+  }
+  var roll2 = function(){
+  	var offence = document.getElementById("offence").value;
+	var defence = document.getElementById("defence").value;
+	var die = createDie(parse("{subtract,({0,1}:"+offence+"),({0,0,1}:"+defence+")}")[0]);
+	document.getElementById("out2").value=die.roll();
+  }
+</script>
+  </head>
+  <body>
+	<div class="layer1">
+	  <div class="layer2"><h1>Game thing</h1></div>
+	  <div class="layer2">
+		<div class="layer3">Dice thing</div>
+		<div class="layer3"><input type="text" id="quantity1">d<input type="text" id="type1"><button onclick="roll1()">Roll!</button><input id="out1"type="text" disabled="true"></div>
+	  </div>
+	  <div class="layer2">
+		<div class="layer3">Heroscape Dice thing</div>
+		<div class="layer3">Offence Dice<input type="text" id="offence">Defence Dice<input type="text" id="defence"><button onclick="roll2()">Roll!</button><input id="out2" type="text" disabled="true"></div>
+	  </div>
+	</div>
+  </body>
+</html>

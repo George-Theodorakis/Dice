@@ -1,4 +1,8 @@
+//this file contains logic for drawing the probability distribution functions (pdfs)
 
+//calculates what window should be used to draw a group of pdfs
+//each should be contained inside the window, going to the edge when possible
+//and none can take up more than half of the available area
 var calculateWindow = function(probModels){
 	//we want each to be scaled relative to each other - if one goes up to 100, the other should.  Constant bar area = same probability
 	var maxSize=0,maxValue=-Infinity,minValue=Infinity;
@@ -26,7 +30,7 @@ var drawCanvas = function(canvas,probModel,window,flags){
 		drawNormalCurve(context,probModel,window,canvas.width,canvas.height);
 	}
 }
-
+//makes a canvas entirely white
 var clearCanvas = function(canvas){
 	var context = canvas.getContext("2d");
 	context.fillStyle = "#ffffff";
@@ -34,6 +38,7 @@ var clearCanvas = function(canvas){
 	context.rect(0,0,canvas.width,canvas.height);
 	context.fill();
 }
+//transform coordinates from [xmin,xmax] to [0,width]
 var transformX = function(x,width, xmin, xmax){
 	return (x-xmin)/(xmax-xmin)*width;
 }
@@ -118,6 +123,7 @@ var drawNormalCurve = function(context, probModel,window,width,height){
 	context.lineWidth=initLineWidth;
 }
 
+//for normal curve drawing
 var normalMultiplier = 1/Math.sqrt(2*Math.PI);
 var normPdf = function(z,sigma){
 	return Math.exp(-z*z/2)*normalMultiplier/sigma;

@@ -1,10 +1,15 @@
-  function Fraction(numerator,denominator){
+//Fraction represents a fraction class, with the 4 basic operations
+//Note that if the result ever exceeds the precision given by floating point precision, a RangeError is thrown
+function Fraction(numerator,denominator){
 		this.numerator=numerator;
 		this.denominator=denominator;
 	}
 	Fraction.prototype.toString = function(){
 	 	return formatNumber(this.numerator) + "/" + formatNumber(this.denominator);
 	};
+	Fraction.prototype.toNumber = function(){
+		return this.numerator/this.denominator;
+	}
 	Fraction.prototype.add = function(fraction){
 		var newDenom = this.leastCommonDenominator(fraction);
 		var newNum = this.numerator*(newDenom/this.denominator)+fraction.numerator*(newDenom/fraction.denominator);
@@ -23,7 +28,7 @@
 	 	var gcd2 = gcd(this.denominator,this.numerator);
 	 	var result = new Fraction(this.numerator/gcd2,this.denominator/gcd2);
 		if(this.denominator>(1000000000000)||isNaN(this.denominator)){
-		 	throw 3;
+		 	throw new RangeError("Number exceeds floating point precision: "+this.toNumber());
 		}
 		return result;
 	};
@@ -36,3 +41,6 @@
 	 	 }
 	 	 return gcd(b, a % b); 
 	};
+	
+	
+	

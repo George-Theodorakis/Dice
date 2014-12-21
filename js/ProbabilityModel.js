@@ -1,21 +1,38 @@
+//this class is used to construct a probability distribution function (pdf)
+//the "Die" abstraction is used to automatically create and use ProbabilityModels
+
 //this whole class may need working around javascript type confusion
 //this class relies on a specific usage - first all values are added, only then may the functionality be used.
 	function ProbabilityModel(){
+		//number of total values added to this
 		this.count=0;
+		//number of unique values added
 		this.uniques=0;
+		//"array" containing all the values, giving their quantities
+		//negative values may be added, this should be used as a Hashmap only
 		this.array=[];
+		//contains pairs of value+quantity, will be sorted after sort() is called
 		this.sortedArr=[];
+		//private var, lookup of values to index in sortedArr
+		//only accurate during creation phase, before sort() is called
 		this._lookup=[];
+		
+		//cache the cdf values because calculations can be expensive
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
+		
+		//max and min values, quantities
 		this.maxIndex=-Infinity;
 		this.minIndex=Infinity;
 		this.maxQuantity=0;
+		//sum of all values added with duplicates
 		this.sum=0;
+		//flags for internal use
 		this.calculated=false;
 		this.hasNegatives=false;
 		this.sorted=false;
-	}
+	};
+	//add a value to the pdf;
 	ProbabilityModel.prototype.add = function(value,quantity){
 		this.cachedCdf = {};
 		this.cachedCdfFrac = {};
@@ -33,7 +50,9 @@
 		this.maxQuantity = Math.max(this.maxQuantity,this.array[value]);
 		this.minIndex = Math.min(this.minIndex,value);
 		this.maxIndex = Math.max(this.maxIndex,value);
-	}
+	};
+	//this function is effectively private - do not call in user code
+	//this should only be called once - to put sortedArr in order after all values have been add()ed
 	ProbabilityModel.prototype.sort = function(){
 		this.sortedArr.sort(function(a,b){
 			if(a[0]<b[0]){
@@ -43,7 +62,9 @@
 			}
 		});
 		this.sorted=true;
-	}
+	};
+	//calculates many statistical values
+	//must be called before using those values and after add()ing every desired value
 	ProbabilityModel.prototype.calculate = function(){
 		if(!this.sorted){
 			this.sort();
@@ -98,25 +119,27 @@
 		quartiles[3] = quartilesLow[3]*highWeight+quartilesHigh[3]*lowWeight;
 		quartiles[4] = this.array.length-1;
 		this._quartiles=quartiles;
-	}
+	};
 	
 	ProbabilityModel.prototype.mean = function(){
 		return this.sum/this.count;
-	}
+	};
 	ProbabilityModel.prototype.stDev = function(){
 		if(!this.calculated){
 			this.calculate();
 			this.calculated=true;
 		}
 		return this._stdev;
-	}
+	};
+	//5 number summary
 	ProbabilityModel.prototype.quartiles = function(){
 		if(!this.calculated){
 			this.calculate();
 			this.calculated=true;
 		}
 		return this._quartiles;
-	}
+	};
+	//this does not normalize the values or put them into a fraction
 	ProbabilityModel.prototype.cdfTotal = function(value){
 		if(!this.sorted){
 			this.sort();
@@ -141,24 +164,25 @@
 			}
 		}
 		return this.cachedCdf[value];
-	}
+	};
 	ProbabilityModel.prototype.cdf = function(value){
 		return this.cdfTotal(value)/this.count;
-	}
+	};
 	ProbabilityModel.prototype.pdf = function(value){
 		var num = this.array[value];
 		if(num===undefined){
 			num=0;
 		}
 		return num/this.count;
-	}
+	};
+	//Frac methods return Fractions instead of Numbers
 	ProbabilityModel.prototype.cdfFrac = function(value){
 		return new Fraction(this.cdfTotal(value),this.count);
-	}
+	};
 	ProbabilityModel.prototype.pdfFrac = function(value){
 		var num = this.array[value];
 		if(num===undefined){
 			num=0;
 		}
 		return new Fraction(num,this.count);
-	}
+	};

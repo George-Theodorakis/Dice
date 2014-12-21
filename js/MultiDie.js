@@ -1,3 +1,6 @@
+//MultiDice represent a combination of two or more independent other "dice"
+//Each has an operation and an identity to go with it
+//SubtractDie is an exception: has no identity, operation is noncommutative/associative, and ignores all but the first two dice
 function MultiDie(){};
 	MultiDie.prototype = new Die();
 	MultiDie.prototype.maxValue = function(){
@@ -23,6 +26,7 @@ function MultiDie(){};
 	MultiDie.prototype.createSideValues = function(){
 		this.probModel = this.possibleCombinations(this.dice.length-1);
 	}
+	//recursively creates the probability distribution function of the distribution
 	MultiDie.prototype.possibleCombinations = function(index){
 		var previous = new ProbabilityModel();
 		
@@ -75,6 +79,7 @@ function MultiDie(){};
 		this.dice=dice;
 		this.createSideValues();
 	}
+	//subtraction is not commutative or associative, so it has special logic
 	SubtractDie.prototype = new MultiDie();
 	SubtractDie.prototype.possibleCombinations = function(){
 		var newProb = new ProbabilityModel();
@@ -84,6 +89,9 @@ function MultiDie(){};
 			},this);
 		},this);
 		return newProb;
+	}
+	SubtractDie.prototype.roll = function(){
+		return this.dice[0].roll()-this.dice[1].roll();
 	}
 	SubtractDie.prototype.identity=undefined;
 	SubtractDie.prototype.name = "subtract";

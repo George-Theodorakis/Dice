@@ -114,7 +114,7 @@ var formatNumber = function(number) {
 	}
 	var str = number.toString() + "000";
 	return str.substr(0, 5);
-}
+};
 var valueToColor = function(value) {
 	var green0=255;
 	var green1=0;
@@ -141,15 +141,16 @@ window.onload = function(){
 };
 </script>
 <style>
-div.table{
+.layer2 .table{
 	overflow: scroll;
 }
 table{
-
+	table-layout:auto;
 	border-collapse: collapse;
 }
 td{
-	
+	min-width:50px;
+	min-height:50px;
 	border-width:3px;
 	border-radius:3px;
 	border-style:solid;
@@ -164,7 +165,7 @@ td{
 	
   </head>
   <body>
-	<div class="layer1 thingy">
+	<div class="layer1">
 	  <div class="layer2">
 		<h1>Table of Probabilities</h1>
 	  </div>
@@ -175,8 +176,8 @@ td{
 		Input Expression<input type="text" id="input" value="[6:x],[6:y]">rows<input type="text" id="rows" value="10">columns<input type="text" id="cols" value="10"><button onclick="makeTable(dieFunc)">Go!</button>
 	  </div>
 	  
-	  <div class="layer2 table">
-		<div id="table"></div>
+	  <div class="layer2">
+		<div id="table" class="table"></div>
 	  </div>
 	  <div class="placeHolder"></div>
 	</div>
