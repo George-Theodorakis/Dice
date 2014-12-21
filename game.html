@@ -63,10 +63,10 @@ var key2 = function(event){
 		resultString=resultString.substr(0,resultString.length-1);
 	}
 	if(quantity==1){
-		resultString=verbose.number;
+		document.getElementById("out1").innerHTML=verboseRoll.number;
+	}else{
+		document.getElementById("out1").innerHTML=(verboseRoll.number+"="+resultString);
 	}
-	document.getElementById("out1").innerHTML=(verboseRoll.number+"="+resultString);
-	
 	//reapply css animation - the middle line is necessary, even though it appears to do nothing
 	document.getElementById("out1").className="";
 	document.getElementById("out1").offsetWidth=document.getElementById("out1").offsetWidth;
