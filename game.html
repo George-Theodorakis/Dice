@@ -10,6 +10,9 @@
 	<script src = "js/CanvasDrawing.js"></script>
 	<title>Game thing</title>
 <style>
+textarea{
+	overflow:auto;
+}
 input.number{
 		max-width:50px;
 		min-width:50px;
@@ -30,7 +33,6 @@ input.number{
 </style>
 <script>
 createProbModel=false;//global for dice
-var dieCache = {};//just in case somebody wants to do multiple trials of an expensive die
 var key1 = function(event){
 	if(event.keyCode==13){
 		roll1();
@@ -45,16 +47,18 @@ var key2 = function(event){
 	}
 	return true;
 }
+var key3 = function(event){
+	if(event.keyCode==13){
+		roll3();
+		return false;
+	}
+	return true;
+}
   var roll1 = function(){
   	var type=document.getElementById("type1").value;
 	var quantity=document.getElementById("quantity1").value;
 	var str = "("+type+":"+quantity+")"
-	var die;
-	if(dieCache[str]){
-		die=dieCache[str];
-	}else{
-		die= createDie(parse(str)[0]);
-	}
+	var die=createDie(loadCookies()+";"+parse(str)[0]);
 	var verboseRoll = die.verboseRoll();
 	var resultString = verboseRoll.string;
 	if(resultString.indexOf("(")==0){
@@ -76,7 +80,7 @@ var key2 = function(event){
 	var defence = document.getElementById("defence").value;
 	//could use SubtractDie, but want to display semantics
 	var str = "({0,1}:"+offence+"),({0,0,1}:"+defence+")";
-	var dice = parse(str).map(createDie);
+	var dice = parse(loadCookies()+";"+str).map(createDie);
 	var result = dice.map(function(die){return die.roll()});
 	document.getElementById("out2").innerHTML=result[0]+" Skulls - "+result[1] + " Shields = "+(result[0]-result[1]);
 	//reapply css animation - the middle line is necessary, even though it appears to do nothing
@@ -84,6 +88,49 @@ var key2 = function(event){
 	document.getElementById("out2").offsetWidth=document.getElementById("out2").offsetWidth;
 	document.getElementById("out2").className="anim";
   }
+var roll3 = function(){
+	var dice = parse(loadCookies()+";"+document.getElementById("value3").value).map(createDie);
+	var verboseRolls = dice.map(function(die){return die.verboseRoll();}).map(function(roll){return roll.number+"="+roll.string});
+	document.getElementById("out3").innerHTML=verboseRolls.join("<br>");
+	//reapply css animation - the middle line is necessary, even though it appears to do nothing
+	document.getElementById("out3").className="";
+	document.getElementById("out3").offsetWidth=document.getElementById("out2").offsetWidth;
+	document.getElementById("out3").className="anim";
+}
+//input: line break delimited key value pairs
+var saveCookies = function(string){
+	deleteAllCookies();
+	var strings=string.split("\n").map(function(str){
+		var date = new Date();
+		date.setDate(date.getDate()+100000);
+		return str+";expires="+date.toUTCString();
+	});
+	strings.forEach(function(str){
+		document.cookie=str;
+	});
+}
+//output: semicolon delimited key value pairs, read from cookies
+var loadCookies = function(){
+	var cookie = document.cookie;
+	return cookie;//that was easy
+}
+var saveCookiesFromTextArea = function(){
+	saveCookies(document.getElementById("textarea").value);
+}
+var deleteAllCookies = function() {//shamelessly copied from internet
+	document.cookie=";expires=Thu, 01 Jan 1970 00:00:00 GMT";//delete null name cookie
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+    	var cookie = cookies[i];
+    	var eqPos = cookie.indexOf("=");
+    	var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    	document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
+window.onload = function(){
+	document.getElementById("textarea").value=loadCookies().split(";").join("\n");
+}
 </script>
   </head>
   <body>
@@ -97,6 +144,14 @@ var key2 = function(event){
 		<div class="layer3">Heroscape Dice thing</div>
 		<div class="layer3">Offence Dice<input onkeyup = key2(event) type="text" class="number" id="offence"> Defence Dice<input onkeyup = key2(event) class="number" type="text" id="defence"> <button onclick="roll2()">Roll!</button>  <span id="out2"></span></div>
 	  </div>
+		<div class="layer2">
+			<div class="layer3">Saved Data</div>
+			<div class="layer3"><textarea id="textarea" onkeyup=saveCookiesFromTextArea()></textarea></div>
+		</div>
+		<div class="layer2">
+			<div class="layer3">Sandbox!</div>
+			<div class="layer3"><input onkeyup = key3(event) type="text" id="value3"><br><button onclick="roll3()">Go!</button><br><span id="out3" ></span></div>
+		</div>
 	</div>
   </body>
 </html>
