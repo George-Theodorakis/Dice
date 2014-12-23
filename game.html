@@ -7,7 +7,6 @@
 	<script src = "js/ComplexDie.js"></script>
 	<script src = "js/MultiDie.js"></script>
 	<script src = "js/Misc.js"></script>
-	<script src = "js/Fraction.js"></script>
 	<script src = "js/CanvasDrawing.js"></script>
 	<title>Game thing</title>
 <style>
@@ -62,7 +61,7 @@ var key2 = function(event){
 		resultString=resultString.substr(1);
 		resultString=resultString.substr(0,resultString.length-1);
 	}
-	if(quantity==1){
+	if(!resultString.indexOf(/\+\(\*/)){
 		document.getElementById("out1").innerHTML=verboseRoll.number;
 	}else{
 		document.getElementById("out1").innerHTML=(verboseRoll.number+"="+resultString);
