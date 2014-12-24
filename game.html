@@ -58,7 +58,7 @@ var key3 = function(event){
   	var type=document.getElementById("type1").value;
 	var quantity=document.getElementById("quantity1").value;
 	var str = "("+type+":"+quantity+")"
-	var die=createDie(loadCookies()+parse(str)[0]);
+	var die=createDie(parse(loadCookies()+str)[0]);
 	var verboseRoll = die.verboseRoll();
 	var resultString = verboseRoll.string;
 	if(resultString.indexOf("(")==0){
@@ -109,14 +109,16 @@ var saveCookies = function(string){
 		document.cookie=str;
 	});
 }
-//output: semicolon delimited key value pairs, read from cookies
+//output: semicolon delimited key value pairs, read from cookies (e.g. "alice=2;bob=4;")
 var loadCookies = function(){
-	var cookie = document.cookie+";";
+	var cookie = ";"+document.cookie+";";
 	var weirdCookies=["popunder","popundr","setover18"];//github puts these there for some reason
 	weirdCookies.forEach(function(weirdCookie){
 		cookie=cookie.replace(new RegExp(weirdCookie+".*?;"),"");
 	});
-	return cookie;
+	var nullRegex=/;[^=]+(?=;)/g;   //matches things between semicolons without equals
+	cookie=cookie.replace(nullRegex,"");
+	return cookie.replace(";","");//remove initial semicolon added by beginning
 }
 var saveCookiesFromTextArea = function(){
 	saveCookies(document.getElementById("textarea").value);
@@ -133,7 +135,7 @@ var deleteAllCookies = function() {//shamelessly copied from internet
     }
 }
 window.onload = function(){
-	document.getElementById("textarea").value=loadCookies().split(";").join("\n");
+	document.getElementById("textarea").value=loadCookies().split(";").map(function(str){return str.trim();}).join("\n");
 }
 </script>
   </head>
