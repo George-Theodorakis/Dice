@@ -3,13 +3,14 @@
 function SimpleDie(sides){	
 		this.sides=sides;
 		var arr = [];
-		this.probModel = new ProbabilityModel({});
-		for(var i = 0; i < sides; i++){
-			arr.push(i+1);
-			this.probModel.add(i+1,1);
+		if(createProbModel){
+		this.probModel = new ProbabilityModel();
+			for(var i = 0; i < sides; i++){
+				arr.push(i+1);
+				this.probModel.add(i+1,1);
+			}
+			this.sideValues=arr;
 		}
-		this.sideValues=arr;
-		
 	}
 	SimpleDie.prototype=new Die();
 	SimpleDie.prototype.cdf = function(value){
@@ -20,6 +21,10 @@ function SimpleDie(sides){
 	}
 	SimpleDie.prototype.roll = function(){
 		return randInt(this.sides)+1;
+	}
+	SimpleDie.prototype.verboseRoll = function(){
+		var result =  randInt(this.sides)+1;
+		return {string:result,number:result};
 	}
 	SimpleDie.prototype.toString = function(){
 		return "Die with " + this.sides + " sides"

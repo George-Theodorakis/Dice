@@ -17,13 +17,24 @@ function MultiDie(){};
 		},this);
 		return result;
 	}
+	MultiDie.prototype.verboseRoll = function(){
+		var resultArr = [];
+		var result = this.identity;
+		this.dice.forEach(function(die){
+			var roll = die.verboseRoll();
+			resultArr.push(roll.string);
+			result=this.operation(result,roll.number);
+		},this);
+		return {string:this.createVerboseString(resultArr),number:result};
+	}
 	MultiDie.prototype.cdf = function(value){
 		return this.probModel.cdf(value);
 	}
 	MultiDie.prototype.cdfFrac = function(value){
 		return this.probModel.cdfFrac(value);
 	}
-	MultiDie.prototype.createSideValues = function(){
+	MultiDie.prototype.createProbModel = function(){
+		if(!createProbModel)return;
 		this.probModel = this.possibleCombinations(this.dice.length-1);
 	}
 	//recursively creates the probability distribution function of the distribution
@@ -52,32 +63,41 @@ function MultiDie(){};
 	}
 	function AddDie(dice){
 		this.dice=dice;
-		this.createSideValues();
+		this.createProbModel();
 		
 	};
 	AddDie.prototype = new MultiDie();
 	AddDie.prototype.identity=0;
 	AddDie.prototype.name = "add";
 	AddDie.prototype.operation = function(a,b){return Number(a)+Number(b);}
+	AddDie.prototype.createVerboseString = function(arr){
+		return "("+arr.join("+")+")";
+	}
 	function MultiplyDie(dice){
 		this.dice=dice;
-		this.createSideValues();
+		this.createProbModel();
 	};
 	MultiplyDie.prototype = new MultiDie();
 	MultiplyDie.prototype.identity=1;
 	MultiplyDie.prototype.name = "multiply";
 	MultiplyDie.prototype.operation= function(a,b){return a*b;}
+	MultiplyDie.prototype.createVerboseString = function(arr){
+		return "("+arr.join("*")+")";
+	}
 	function MaxDie(dice){
 		this.dice=dice;
-		this.createSideValues();
+		this.createProbModel();
 	};
 	MaxDie.prototype = new MultiDie();
 	MaxDie.prototype.identity=0;//negative infinity
 	MaxDie.prototype.name = "max";
 	MaxDie.prototype.operation = function(a,b){return Math.max(a,b);}
+	MaxDie.prototype.createVerboseString = function(arr){
+		return "max("+arr.join(",")+")";
+	}
 	function SubtractDie(dice){//behavior undefined when given more than 2 dice
 		this.dice=dice;
-		this.createSideValues();
+		this.createProbModel();
 	}
 	//subtraction is not commutative or associative, so it has special logic
 	SubtractDie.prototype = new MultiDie();
@@ -92,6 +112,11 @@ function MultiDie(){};
 	}
 	SubtractDie.prototype.roll = function(){
 		return this.dice[0].roll()-this.dice[1].roll();
+	}
+	SubtractDie.prototype.verboseRoll = function(){
+		var first = this.dice[0].verboseRoll();
+		var second = this.dice[1].verboseRoll();
+		return {string:"("+first.string+"-"+second.string+")",number:first.number-second.number};
 	}
 	SubtractDie.prototype.identity=undefined;
 	SubtractDie.prototype.name = "subtract";

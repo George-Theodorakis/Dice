@@ -55,7 +55,8 @@
 		var tempReplacements = [];
 		var strs = string.split(";");
 		string=strs[strs.length-1];
-		for(var i = 0; i < strs.length-1; i++){
+		strs=strs.filter(function(argument){return argument.indexOf("=")>-1});
+		for(var i = 0; i < strs.length; i++){
 			tempReplacements.push(strs[i].split("="));
 		}
 		tempReplacements.forEach(function(arr){
