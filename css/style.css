@@ -1,34 +1,39 @@
 div.layer1, div.layer3, div.layer5{
-	border-color:#66aa55;
-	background-color:#ddffd0;
+	/*border-color:#f82;*/
+	background-color:#ccd;
 }
 div.layer2, div.layer4, div.graph{
-	border-color:#66ff77;
-	background-color:#aaff9a;
+/*	border-color:#88c;*/
+	background-color:#eef;
 }
 .layer1, .layer2, .layer3, .layer4, .layer5, div.graph{
 	margin:5px;
-	border-width:3px;
+/*	border-width:2px;
 	border-radius:3px;
-	border-style:solid;
+	border-style:solid;*/
 	padding:5px;
 }
 div.placeHolder{
 	clear:both;
-}
-body{
-	background-color:#aaff9a;
-	color:#004411;
 }
 h1,h2,h3{
 	margin:5px;
 }
 p{
 	margin-left:5px;
-}
+}/*
 div.sideBar{
- 	/*float:right;*/
+ 	float:right;
 }
 div.mainContent{
-  /*	float:left;*/
+  	float:left;
+}*/
+span.input {
+	color:#555;
+	background-color:#eee;
+	border-style:solid;
+	border-width: 1px 0px;
+	border-color:#222;
+	font-weight:bold;
 }
+

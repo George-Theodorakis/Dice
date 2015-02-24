@@ -118,9 +118,9 @@ var formatNumber = function(number) {
 var valueToColor = function(value) {
 	var green0=255;
 	var green1=0;
-	var blue0=208;
+	var blue0=255;
 	var blue1=0;
-	var red0=221;
+	var red0=255;
 	var red1=255;//interpolate these values
 	var weight = valueToWeight(value);
 	var green=Math.floor(green0 * (1 - weight) + green1 * weight);
@@ -154,8 +154,8 @@ td{
 	border-width:3px;
 	border-radius:3px;
 	border-style:solid;
-	border-color:#66aa55;
-	background-color:#ddffd0;
+	border-color:#999;
+	background-color:#dddddd;
 	width:50px;
 	height:50px;
 	text-align:center;
